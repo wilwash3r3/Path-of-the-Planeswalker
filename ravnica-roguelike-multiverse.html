@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Path of the Planeswalker — A Ravnica Roguelike</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="icon" id="favicon" href="">
+<link rel="apple-touch-icon" id="appleTouchIcon" href="">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Planeswalker">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#181510">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Cinzel+Decorative:wght@700;900&family=Pirata+One&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -116,25 +122,25 @@
   }
   .touch-controls{ display:none; } /* hidden by default - shown only on touch-primary devices below */
   .touch-dpad{
-    position:absolute; bottom:14px; left:14px; z-index:6;
-    display:grid; grid-template-columns:repeat(3,44px); grid-template-rows:repeat(3,44px);
-    gap:4px;
+    position:fixed; bottom:16px; left:16px; z-index:9999;
+    display:grid; grid-template-columns:repeat(3,48px); grid-template-rows:repeat(3,48px);
+    gap:4px; opacity:0.55;
   }
   .dpad-btn{
-    background:rgba(20,16,13,0.72); border:2px solid var(--stone-3); border-radius:8px;
+    background:rgba(20,16,13,0.5); border:2px solid rgba(159,140,120,0.6); border-radius:8px;
     color:var(--parchment); font-size:1.1rem; display:flex; align-items:center; justify-content:center;
-    padding:0; touch-action:manipulation; user-select:none;
+    padding:0; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
   }
   .dpad-up{ grid-column:2; grid-row:1; }
   .dpad-left{ grid-column:1; grid-row:2; }
   .dpad-right{ grid-column:3; grid-row:2; }
   .dpad-down{ grid-column:2; grid-row:3; }
   .touch-ability-btn{
-    position:absolute; bottom:70px; right:8px; z-index:6;
-    width:60px; height:60px; border-radius:50%;
-    background:rgba(167,106,217,0.75); border:2px solid #c9a6e0; color:#fff;
+    position:fixed; bottom:24px; right:16px; z-index:9999;
+    width:64px; height:64px; border-radius:50%; opacity:0.55;
+    background:rgba(167,106,217,0.5); border:2px solid rgba(201,166,224,0.7); color:#fff;
     font-size:1.4rem; display:flex; align-items:center; justify-content:center;
-    padding:0; touch-action:manipulation; user-select:none;
+    padding:0; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
   }
   @media (hover:none) and (pointer:coarse){
     .touch-controls{ display:block; }
@@ -358,12 +364,12 @@
             </div>
             <div id="touchControls" class="touch-controls">
               <div id="touchDpad" class="touch-dpad">
-                <button class="dpad-btn dpad-up" onclick="tryMove(0,-1)" aria-label="Move up">▲</button>
-                <button class="dpad-btn dpad-left" onclick="tryMove(-1,0)" aria-label="Move left">◀</button>
-                <button class="dpad-btn dpad-right" onclick="tryMove(1,0)" aria-label="Move right">▶</button>
-                <button class="dpad-btn dpad-down" onclick="tryMove(0,1)" aria-label="Move down">▼</button>
+                <button class="dpad-btn dpad-up" data-move="0,-1" aria-label="Move up">▲</button>
+                <button class="dpad-btn dpad-left" data-move="-1,0" aria-label="Move left">◀</button>
+                <button class="dpad-btn dpad-right" data-move="1,0" aria-label="Move right">▶</button>
+                <button class="dpad-btn dpad-down" data-move="0,1" aria-label="Move down">▼</button>
               </div>
-              <button id="touchAbilityBtn" class="touch-ability-btn" onclick="useAbility()" aria-label="Use guild ability">⚔</button>
+              <button id="touchAbilityBtn" class="touch-ability-btn" aria-label="Use guild ability">⚔</button>
             </div>
           </div>
           <div id="logPanel"></div>
@@ -1548,11 +1554,16 @@ function setTouchControls(value){
   saveSettings();
   applyTouchControls();
 }
+function isPhoneOrTablet(){
+  const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  const isMobileOS = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  return hasTouch && isMobileOS;
+}
 function applyTouchControls(){
   document.body.classList.remove('touch-controls-on', 'touch-controls-off');
   if(TOUCH_CONTROLS === 'on') document.body.classList.add('touch-controls-on');
   else if(TOUCH_CONTROLS === 'off') document.body.classList.add('touch-controls-off');
-  // 'auto' adds neither class, leaving it to the hover/pointer media query
+  else document.body.classList.add(isPhoneOrTablet() ? 'touch-controls-on' : 'touch-controls-off'); // 'auto' - decide explicitly via JS instead of relying only on a CSS media query
 }
 function applyButtonLayout(){
   const toolbar = document.querySelector('.toolbar');
@@ -8275,6 +8286,68 @@ window.addEventListener('keydown', (e)=>{
   else return;
   e.preventDefault();
 });
+
+function generateAppIcon(){
+  const size = 180; // standard apple-touch-icon size, scales down fine for other uses
+  const off = document.createElement('canvas');
+  off.width = size; off.height = size;
+  const ctx = off.getContext('2d');
+  // dark parchment-stone background, rounded corners (matching the game's aesthetic)
+  const r = size*0.18;
+  ctx.fillStyle = '#181510';
+  ctx.beginPath();
+  ctx.moveTo(r,0); ctx.lineTo(size-r,0); ctx.quadraticCurveTo(size,0,size,r);
+  ctx.lineTo(size,size-r); ctx.quadraticCurveTo(size,size,size-r,size);
+  ctx.lineTo(r,size); ctx.quadraticCurveTo(0,size,0,size-r);
+  ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+  ctx.closePath(); ctx.fill();
+  // a planeswalker spark: a bright radial burst of pointed rays from the center
+  const cx = size/2, cy = size/2;
+  const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,size*0.5);
+  grad.addColorStop(0, '#fff6d8');
+  grad.addColorStop(0.35, '#e8c14a');
+  grad.addColorStop(1, 'rgba(232,193,74,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(cx,cy,size*0.48,0,Math.PI*2); ctx.fill();
+  const spikes = 8;
+  ctx.fillStyle = '#f4d976';
+  for(let i=0; i<spikes; i++){
+    const angle = (i/spikes) * Math.PI*2;
+    const longR = size*0.42, shortR = size*0.13;
+    const midAngle = angle + Math.PI/spikes;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(angle)*shortR, cy + Math.sin(angle)*shortR);
+    ctx.lineTo(cx + Math.cos(midAngle)*longR, cy + Math.sin(midAngle)*longR);
+    ctx.lineTo(cx + Math.cos(angle+2*Math.PI/spikes)*shortR, cy + Math.sin(angle+2*Math.PI/spikes)*shortR);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = '#fffbe8';
+  ctx.beginPath(); ctx.arc(cx,cy,size*0.1,0,Math.PI*2); ctx.fill();
+  return off.toDataURL('image/png');
+}
+const appIconUrl = generateAppIcon();
+const favicon = document.getElementById('favicon');
+const appleTouchIcon = document.getElementById('appleTouchIcon');
+if(favicon) favicon.href = appIconUrl;
+if(appleTouchIcon) appleTouchIcon.href = appIconUrl;
+
+function setupTouchButton(el, action){
+  if(!el) return;
+  let lastFired = 0;
+  const fire = ()=>{
+    const now = Date.now();
+    if(now - lastFired < 150) return; // guards against a stray double-fire on some browsers
+    lastFired = now;
+    action();
+  };
+  el.addEventListener('touchstart', (e)=>{ e.preventDefault(); fire(); }, {passive:false});
+  el.addEventListener('click', fire); // fallback for mouse/trackpad input, harmless alongside touch
+}
+document.querySelectorAll('.dpad-btn').forEach(btn=>{
+  const [dx,dy] = btn.dataset.move.split(',').map(Number);
+  setupTouchButton(btn, ()=>tryMove(dx,dy));
+});
+setupTouchButton(document.getElementById('touchAbilityBtn'), useAbility);
 
 buildGuildGrid();
 refreshStartScreen();
