@@ -7,9 +7,11 @@
 <link rel="icon" id="favicon" href="">
 <link rel="apple-touch-icon" id="appleTouchIcon" href="">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Planeswalker">
+<meta name="apple-mobile-web-app-title" content="Path of the Planeswalker">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Path of the Planeswalker">
 <meta name="theme-color" content="#181510">
+<link rel="manifest" id="webManifest" href="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Cinzel+Decorative:wght@700;900&family=Pirata+One&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -135,13 +137,7 @@
   .dpad-left{ grid-column:1; grid-row:2; }
   .dpad-right{ grid-column:3; grid-row:2; }
   .dpad-down{ grid-column:2; grid-row:3; }
-  .touch-ability-btn{
-    position:fixed; bottom:24px; right:16px; z-index:9999;
-    width:64px; height:64px; border-radius:50%; opacity:0.55;
-    background:rgba(167,106,217,0.5); border:2px solid rgba(201,166,224,0.7); color:#fff;
-    font-size:1.4rem; display:flex; align-items:center; justify-content:center;
-    padding:0; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
-  }
+  /* touch-ability-btn removed - the toolbar's own Ability button is used on touch devices instead */
   @media (hover:none) and (pointer:coarse){
     .touch-controls{ display:block; }
   }
@@ -369,7 +365,6 @@
                 <button class="dpad-btn dpad-right" data-move="1,0" aria-label="Move right">▶</button>
                 <button class="dpad-btn dpad-down" data-move="0,1" aria-label="Move down">▼</button>
               </div>
-              <button id="touchAbilityBtn" class="touch-ability-btn" aria-label="Use guild ability">⚔</button>
             </div>
           </div>
           <div id="logPanel"></div>
@@ -8331,23 +8326,45 @@ const appleTouchIcon = document.getElementById('appleTouchIcon');
 if(favicon) favicon.href = appIconUrl;
 if(appleTouchIcon) appleTouchIcon.href = appIconUrl;
 
-function setupTouchButton(el, action){
+const webManifest = {
+  name: 'Path of the Planeswalker',
+  short_name: 'Path of the Planeswalker',
+  icons: [{ src: appIconUrl, sizes: '180x180', type: 'image/png' }],
+  start_url: '.',
+  display: 'standalone',
+  background_color: '#181510',
+  theme_color: '#181510',
+};
+const manifestLink = document.getElementById('webManifest');
+if(manifestLink) manifestLink.href = 'data:application/manifest+json;base64,' + btoa(JSON.stringify(webManifest));
+
+function setupHoldToMove(el, action){
   if(!el) return;
-  let lastFired = 0;
-  const fire = ()=>{
-    const now = Date.now();
-    if(now - lastFired < 150) return; // guards against a stray double-fire on some browsers
-    lastFired = now;
-    action();
+  let holdInterval = null;
+  let initialTimeout = null;
+  const stop = ()=>{
+    if(initialTimeout){ clearTimeout(initialTimeout); initialTimeout = null; }
+    if(holdInterval){ clearInterval(holdInterval); holdInterval = null; }
   };
-  el.addEventListener('touchstart', (e)=>{ e.preventDefault(); fire(); }, {passive:false});
-  el.addEventListener('click', fire); // fallback for mouse/trackpad input, harmless alongside touch
+  const start = (e)=>{
+    if(e) e.preventDefault();
+    stop(); // clear any stray timers left over from a previous press
+    action(); // fire immediately on press-down
+    initialTimeout = setTimeout(()=>{
+      holdInterval = setInterval(action, 150); // steady repeat rate while held
+    }, 350); // brief delay before repeat begins, so a quick tap doesn't double-move
+  };
+  el.addEventListener('touchstart', start, {passive:false});
+  el.addEventListener('touchend', stop);
+  el.addEventListener('touchcancel', stop);
+  el.addEventListener('mousedown', start); // fallback for mouse/trackpad testing
+  el.addEventListener('mouseup', stop);
+  el.addEventListener('mouseleave', stop);
 }
 document.querySelectorAll('.dpad-btn').forEach(btn=>{
   const [dx,dy] = btn.dataset.move.split(',').map(Number);
-  setupTouchButton(btn, ()=>tryMove(dx,dy));
+  setupHoldToMove(btn, ()=>tryMove(dx,dy));
 });
-setupTouchButton(document.getElementById('touchAbilityBtn'), useAbility);
 
 buildGuildGrid();
 refreshStartScreen();
