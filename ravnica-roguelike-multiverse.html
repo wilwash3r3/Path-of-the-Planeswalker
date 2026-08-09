@@ -159,6 +159,8 @@
 
   .controls-hint{font-size:0.7rem; color:var(--parchment-dim); margin-top:10px; text-align:center; flex-shrink:0;}
   body.touch-controls-on .controls-hint{ display:none; }
+  .touch-controls-hint{ display:none; font-size:0.7rem; color:var(--parchment-dim); margin-top:10px; text-align:center; flex-shrink:0; }
+  body.touch-controls-on .touch-controls-hint{ display:block; }
   .btn-dragging{ opacity:0.7; box-shadow:0 0 0 3px rgba(232,193,74,0.6); }
 
   .toolbar{display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; flex-shrink:0;}
@@ -169,6 +171,7 @@
     display:inline-block; background:rgba(0,0,0,0.35); border:1px solid var(--parchment-dim);
     border-radius:4px; padding:0 5px; font-size:0.68rem; margin-left:4px; color:var(--parchment);
   }
+  body.touch-controls-on .keycap{ display:none; }
 
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(5,4,3,0.92);
@@ -372,6 +375,7 @@
           <div id="logPanel"></div>
         </div>
         <div class="controls-hint">Arrows / WASD / Numpad to move &amp; attack &nbsp;·&nbsp; Space or E for guild ability &nbsp;·&nbsp; I inventory &nbsp;·&nbsp; Q eat/drink &nbsp;·&nbsp; Z quick magic &nbsp;·&nbsp; J status &amp; quest &nbsp;·&nbsp; M map &nbsp;·&nbsp; R short rest &nbsp;·&nbsp; L long rest &nbsp;·&nbsp; P plane shift (once unlocked) &nbsp;·&nbsp; Esc to close a screen</div>
+        <div class="touch-controls-hint">Tap the D-pad to move &nbsp;·&nbsp; Long-press any button below to move it</div>
         <div class="toolbar" id="mainToolbar">
           <button data-btn-id="ability" onclick="useAbility()">Ability <span class="keycap">Space</span></button>
           <button data-btn-id="inventory" onclick="toggleInventory()">Inventory <span class="keycap">I</span></button>
@@ -8378,6 +8382,23 @@ function resetButtonPositions(){
     btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.zIndex = '';
   });
 }
+const BUTTON_GRID_SIZE = 44;
+function snapToGrid(value){
+  return Math.round(value / BUTTON_GRID_SIZE) * BUTTON_GRID_SIZE;
+}
+function rectsOverlap(a, b){
+  return !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
+}
+function wouldOverlapOthers(btn, x, y, width, height){
+  const candidate = { left: x, top: y, right: x+width, bottom: y+height };
+  const others = document.querySelectorAll('[data-btn-id]');
+  for(const other of others){
+    if(other === btn) continue;
+    const r = other.getBoundingClientRect();
+    if(rectsOverlap(candidate, r)) return true;
+  }
+  return false;
+}
 function enableLongPressDrag(btn){
   let longPressTimer = null;
   let dragging = false;
@@ -8405,11 +8426,13 @@ function enableLongPressDrag(btn){
     }
     e.preventDefault();
     const rect = btn.getBoundingClientRect();
-    const newX = touch.clientX - rect.width/2;
-    const newY = touch.clientY - rect.height/2;
+    const rawX = touch.clientX - rect.width/2;
+    const rawY = touch.clientY - rect.height/2;
+    const clampedX = Math.max(0, Math.min(window.innerWidth-rect.width, rawX));
+    const clampedY = Math.max(0, Math.min(window.innerHeight-rect.height, rawY));
     btn.style.position = 'fixed';
-    btn.style.left = Math.max(0, Math.min(window.innerWidth-rect.width, newX)) + 'px';
-    btn.style.top = Math.max(0, Math.min(window.innerHeight-rect.height, newY)) + 'px';
+    btn.style.left = snapToGrid(clampedX) + 'px';
+    btn.style.top = snapToGrid(clampedY) + 'px';
     btn.style.zIndex = '9998';
   };
   const onTouchEnd = (e)=>{
@@ -8417,8 +8440,22 @@ function enableLongPressDrag(btn){
     if(dragging){
       dragging = false;
       btn.classList.remove('btn-dragging');
-      customButtonPositions[btn.dataset.btnId] = { x: parseFloat(btn.style.left), y: parseFloat(btn.style.top) };
-      saveButtonPositions();
+      const rect = btn.getBoundingClientRect();
+      if(wouldOverlapOthers(btn, rect.left, rect.top, rect.width, rect.height)){
+        // reject the drop - restore whatever position (custom or default) it had before this drag
+        const saved = customButtonPositions[btn.dataset.btnId];
+        if(saved){
+          btn.style.position = 'fixed';
+          btn.style.left = saved.x + 'px';
+          btn.style.top = saved.y + 'px';
+        } else {
+          btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.zIndex = '';
+        }
+        if(navigator.vibrate) navigator.vibrate([20,20,20]); // distinct pattern signaling "can't drop here"
+      } else {
+        customButtonPositions[btn.dataset.btnId] = { x: parseFloat(btn.style.left), y: parseFloat(btn.style.top) };
+        saveButtonPositions();
+      }
       e.preventDefault(); // stop the tap/click that would otherwise fire the button's own action right after a drag
     }
   };
