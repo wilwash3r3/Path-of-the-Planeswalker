@@ -158,6 +158,8 @@
   }
 
   .controls-hint{font-size:0.7rem; color:var(--parchment-dim); margin-top:10px; text-align:center; flex-shrink:0;}
+  body.touch-controls-on .controls-hint{ display:none; }
+  .btn-dragging{ opacity:0.7; box-shadow:0 0 0 3px rgba(232,193,74,0.6); }
 
   .toolbar{display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; flex-shrink:0;}
   .toolbar.compact-layout{gap:5px;}
@@ -370,17 +372,17 @@
           <div id="logPanel"></div>
         </div>
         <div class="controls-hint">Arrows / WASD / Numpad to move &amp; attack &nbsp;·&nbsp; Space or E for guild ability &nbsp;·&nbsp; I inventory &nbsp;·&nbsp; Q eat/drink &nbsp;·&nbsp; Z quick magic &nbsp;·&nbsp; J status &amp; quest &nbsp;·&nbsp; M map &nbsp;·&nbsp; R short rest &nbsp;·&nbsp; L long rest &nbsp;·&nbsp; P plane shift (once unlocked) &nbsp;·&nbsp; Esc to close a screen</div>
-        <div class="toolbar">
-          <button onclick="useAbility()">Ability <span class="keycap">Space</span></button>
-          <button onclick="toggleInventory()">Inventory <span class="keycap">I</span></button>
-          <button onclick="toggleConsume()">Eat / Drink <span class="keycap">Q</span></button>
-          <button onclick="toggleStatus()">Status / Quest <span class="keycap">J</span></button>
-          <button onclick="toggleMap()">Map <span class="keycap">M</span></button>
-          <button onclick="toggleMagic()">Magic <span class="keycap">Z</span></button>
-          <button onclick="shortRest()">Short Rest <span class="keycap">R</span></button>
-          <button onclick="longRest()">Long Rest <span class="keycap">L</span></button>
-          <button id="planeShiftBtn" onclick="attemptPlaneShift()" style="display:none; border-color:#a76ad9; color:#c9a6e0;">Plane Shift <span class="keycap">P</span></button>
-          <button onclick="openSettings()">⚙ Settings</button>
+        <div class="toolbar" id="mainToolbar">
+          <button data-btn-id="ability" onclick="useAbility()">Ability <span class="keycap">Space</span></button>
+          <button data-btn-id="inventory" onclick="toggleInventory()">Inventory <span class="keycap">I</span></button>
+          <button data-btn-id="eatdrink" onclick="toggleConsume()">Eat / Drink <span class="keycap">Q</span></button>
+          <button data-btn-id="status" onclick="toggleStatus()">Status / Quest <span class="keycap">J</span></button>
+          <button data-btn-id="map" onclick="toggleMap()">Map <span class="keycap">M</span></button>
+          <button data-btn-id="magic" onclick="toggleMagic()">Magic <span class="keycap">Z</span></button>
+          <button data-btn-id="shortrest" onclick="shortRest()">Short Rest <span class="keycap">R</span></button>
+          <button data-btn-id="longrest" onclick="longRest()">Long Rest <span class="keycap">L</span></button>
+          <button id="planeShiftBtn" data-btn-id="planeshift" onclick="attemptPlaneShift()" style="display:none; border-color:#a76ad9; color:#c9a6e0;">Plane Shift <span class="keycap">P</span></button>
+          <button data-btn-id="settings" onclick="openSettings()">⚙ Settings</button>
         </div>
       </div>
     </div>
@@ -635,12 +637,16 @@
       </select>
     </div>
     <div class="equip-slot" style="margin-bottom:18px;">
-      <span><b>Touch Controls</b><br><span class="inv-tag">On-screen movement pad and ability button for phone/tablet. Auto shows on touchscreens.</span></span>
+      <span><b>Touch Controls</b><br><span class="inv-tag">On-screen movement pad for phone/tablet. Auto shows on touchscreens. Long-press any action button to drag it to a new spot.</span></span>
       <select id="touchControlsSelect" onchange="setTouchControls(this.value)" style="background:var(--stone-1); color:var(--parchment); border:1px solid var(--stone-3); border-radius:6px; padding:6px 8px; font-family:'JetBrains Mono', monospace;">
         <option value="auto">Auto</option>
         <option value="on">Always On</option>
         <option value="off">Always Off</option>
       </select>
+    </div>
+    <div class="equip-slot" style="margin-bottom:18px;">
+      <span><b>Button Positions</b><br><span class="inv-tag">Undo any long-press drag customization and put all action buttons back where they started.</span></span>
+      <button onclick="resetButtonPositions()">Reset Positions</button>
     </div>
     <h3 style="font-size:0.85rem; margin-bottom:8px;">Difficulty</h3>
     <div id="difficultyChoices" style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;"></div>
@@ -1551,8 +1557,13 @@ function setTouchControls(value){
 }
 function isPhoneOrTablet(){
   const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-  const isMobileOS = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  return hasTouch && isMobileOS;
+  if(!hasTouch) return false; // require touch capability as a baseline - excludes non-touch desktops/laptops outright
+  const isMobileOS = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
+  const smallScreen = Math.min(window.screen.width, window.screen.height) <= 1024;
+  const coarsePointer = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+  // any one signal is enough - relying on a single check (like UA string alone) proved unreliable
+  // in some embedded/webview contexts that may not report a standard mobile user agent
+  return isMobileOS || smallScreen || coarsePointer;
 }
 function applyTouchControls(){
   document.body.classList.remove('touch-controls-on', 'touch-controls-off');
@@ -8337,6 +8348,88 @@ const webManifest = {
 };
 const manifestLink = document.getElementById('webManifest');
 if(manifestLink) manifestLink.href = 'data:application/manifest+json;base64,' + btoa(JSON.stringify(webManifest));
+
+const BUTTON_POSITIONS_KEY = 'planeswalker_button_positions';
+let customButtonPositions = {};
+function loadButtonPositions(){
+  try {
+    const raw = localStorage.getItem(BUTTON_POSITIONS_KEY);
+    if(raw) customButtonPositions = JSON.parse(raw);
+  } catch(err){ /* ignore - positions just won't persist in this environment */ }
+}
+function saveButtonPositions(){
+  try { localStorage.setItem(BUTTON_POSITIONS_KEY, JSON.stringify(customButtonPositions)); } catch(err){}
+}
+function applyButtonPositions(){
+  Object.entries(customButtonPositions).forEach(([id, pos])=>{
+    const btn = document.querySelector(`[data-btn-id="${id}"]`);
+    if(btn){
+      btn.style.position = 'fixed';
+      btn.style.left = pos.x + 'px';
+      btn.style.top = pos.y + 'px';
+      btn.style.zIndex = '9998';
+    }
+  });
+}
+function resetButtonPositions(){
+  customButtonPositions = {};
+  saveButtonPositions();
+  document.querySelectorAll('[data-btn-id]').forEach(btn=>{
+    btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.zIndex = '';
+  });
+}
+function enableLongPressDrag(btn){
+  let longPressTimer = null;
+  let dragging = false;
+  let startX = 0, startY = 0;
+  const LONG_PRESS_MS = 500;
+  const MOVE_TOLERANCE = 10; // px of finger movement allowed before a pending long-press is cancelled (treated as a tap/scroll instead)
+  const onTouchStart = (e)=>{
+    if(!document.body.classList.contains('touch-controls-on')) return; // repositioning only makes sense with touch controls active
+    const touch = e.touches[0];
+    startX = touch.clientX; startY = touch.clientY;
+    dragging = false;
+    longPressTimer = setTimeout(()=>{
+      dragging = true;
+      btn.classList.add('btn-dragging');
+      if(navigator.vibrate) navigator.vibrate(30);
+    }, LONG_PRESS_MS);
+  };
+  const onTouchMove = (e)=>{
+    if(!e.touches[0]) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - startX, dy = touch.clientY - startY;
+    if(!dragging){
+      if(Math.abs(dx) > MOVE_TOLERANCE || Math.abs(dy) > MOVE_TOLERANCE) clearTimeout(longPressTimer);
+      return;
+    }
+    e.preventDefault();
+    const rect = btn.getBoundingClientRect();
+    const newX = touch.clientX - rect.width/2;
+    const newY = touch.clientY - rect.height/2;
+    btn.style.position = 'fixed';
+    btn.style.left = Math.max(0, Math.min(window.innerWidth-rect.width, newX)) + 'px';
+    btn.style.top = Math.max(0, Math.min(window.innerHeight-rect.height, newY)) + 'px';
+    btn.style.zIndex = '9998';
+  };
+  const onTouchEnd = (e)=>{
+    clearTimeout(longPressTimer);
+    if(dragging){
+      dragging = false;
+      btn.classList.remove('btn-dragging');
+      customButtonPositions[btn.dataset.btnId] = { x: parseFloat(btn.style.left), y: parseFloat(btn.style.top) };
+      saveButtonPositions();
+      e.preventDefault(); // stop the tap/click that would otherwise fire the button's own action right after a drag
+    }
+  };
+  btn.addEventListener('touchstart', onTouchStart, {passive:true});
+  btn.addEventListener('touchmove', onTouchMove, {passive:false});
+  btn.addEventListener('touchend', onTouchEnd);
+  btn.addEventListener('touchcancel', ()=>{ clearTimeout(longPressTimer); dragging=false; btn.classList.remove('btn-dragging'); });
+}
+document.querySelectorAll('[data-btn-id]').forEach(enableLongPressDrag);
+loadButtonPositions();
+applyButtonPositions();
 
 function setupHoldToMove(el, action){
   if(!el) return;
