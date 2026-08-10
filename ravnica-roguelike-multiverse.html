@@ -169,6 +169,8 @@
     gap:8px; flex-wrap:unset; justify-content:unset;
   }
   .grid-slot-target{ box-shadow:0 0 0 3px rgba(232,193,74,0.9) inset; }
+  .locked-hidden{ display:none; }
+  body.touch-controls-on .locked-hidden{ display:block; visibility:hidden; pointer-events:none; }
   .toolbar.compact-layout{gap:5px;}
   .toolbar.compact-layout button{padding:6px 10px; font-size:0.68rem; letter-spacing:0.01em;}
   .toolbar.compact-layout .keycap{padding:0 3px; font-size:0.6rem; margin-left:2px;}
@@ -306,7 +308,7 @@
       <button onclick="openSettings()">⚙ Settings</button>
     </div>
     <div id="startSaveStatus" class="start-save-status"></div>
-    <p id="buildVersion" style="font-size:0.7rem; color:var(--parchment-dim); text-align:center; margin-top:24px; opacity:0.6;">Build v2 — 2026-08-09</p>
+    <p id="buildVersion" style="font-size:0.7rem; color:var(--parchment-dim); text-align:center; margin-top:24px; opacity:0.6;">Build v3 — 2026-08-09</p>
   </div>
 
   <div id="guildScreen" style="display:none;">
@@ -391,7 +393,7 @@
           <button data-btn-id="magic" onclick="toggleMagic()">Magic <span class="keycap">Z</span></button>
           <button data-btn-id="shortrest" onclick="shortRest()">Short Rest <span class="keycap">R</span></button>
           <button data-btn-id="longrest" onclick="longRest()">Long Rest <span class="keycap">L</span></button>
-          <button id="planeShiftBtn" data-btn-id="planeshift" onclick="attemptPlaneShift()" style="display:none; border-color:#a76ad9; color:#c9a6e0;">Plane Shift <span class="keycap">P</span></button>
+          <button id="planeShiftBtn" data-btn-id="planeshift" class="locked-hidden" onclick="attemptPlaneShift()" style="border-color:#a76ad9; color:#c9a6e0;">Plane Shift <span class="keycap">P</span></button>
           <button data-btn-id="settings" onclick="openSettings()">⚙ Settings</button>
         </div>
       </div>
@@ -2035,7 +2037,7 @@ function loadGame(){
   };
   applyPlaneData(state.plane);
   setupGameScreenChrome(d.guildKey, guild);
-  document.getElementById('planeShiftBtn').style.display = state.planeShiftUnlocked ? 'inline-block' : 'none';
+  setPlaneShiftVisible(state.planeShiftUnlocked);
   document.getElementById('overlay').style.display = 'none';
   closeSettings();
   log(`You wake at the inn, the road's memory still fresh. Welcome back.`, 'system');
@@ -3260,7 +3262,7 @@ function checkMentorUnlock(){
   state.mentorMet = true;
   state.planeShiftUnlocked = true;
   state.missionsOnPlane = 5; // ready immediately
-  document.getElementById('planeShiftBtn').style.display = 'inline-block';
+  setPlaneShiftVisible(true);
   showDialogue(MENTOR_NAME,
     `A figure steps out of a shimmering tear in the air, unbothered by the fight you were just in. She studies you for a long moment before she speaks.<br><br>"There it is. I wasn't sure until just now — but you've got a spark. You're a planeswalker, whether anyone ever told you or not."<br><br>"I'm ${MENTOR_NAME}. I can't send you anywhere myself — nobody can do that part for you. But I can show you how to reach for it. Focus, and the spark will carry you somewhere. You're new to this, though, so don't expect to steer yet — where you land is still up to the spark, not you. That'll change with practice."<br><br>"I'm not telling you this out of the goodness of my heart. I've been tracking something spreading corruption across the planes — patient, old, and getting stronger every place it touches. I can't chase it alone anymore, and you're not going to survive it without knowing what I know. So here's the deal: whatever you find out there, you bring it back to me, and I'll tell you what it means. We do this together, or neither of us makes it."`,
     `Plane Shift unlocked! Use the button (or press P) once you've cleared 5 missions on your current plane. As a novice, you can't choose your destination yet — the spark decides.`);
@@ -3268,6 +3270,11 @@ function checkMentorUnlock(){
 }
 
 /* Attempt a plane shift — checks the mission gate, then hands off to doPlaneShift(). */
+function setPlaneShiftVisible(visible){
+  const btn = document.getElementById('planeShiftBtn');
+  if(!btn) return;
+  btn.classList.toggle('locked-hidden', !visible);
+}
 function attemptPlaneShift(){
   if(!state || state.player.hp<=0) return;
   if(document.getElementById('dialogueOverlay').style.display==='flex') return;
@@ -6837,7 +6844,7 @@ function startGame(guildKey, raceId, charName){
   grantStartingSupplies(guildKey);
   applyCheatCode(cheatName, guildKey);
   setupGameScreenChrome(guildKey, guild);
-  document.getElementById('planeShiftBtn').style.display = state.planeShiftUnlocked ? 'inline-block' : 'none';
+  setPlaneShiftVisible(state.planeShiftUnlocked);
   log(`${state.player.name}, a ${race?race.name:''} agent of the ${guild.name}, descends — pack stocked for the road ahead.`, 'system');
   loadFloor();
   spawnPendingDeathPackages();
@@ -8025,7 +8032,7 @@ function render(){
   document.getElementById('planeNameVal').textContent = planeLabel;
   const psBtn = document.getElementById('planeShiftBtn');
   if(state.planeShiftUnlocked){
-    psBtn.style.display = 'inline-block';
+    setPlaneShiftVisible(true);
     if(state.multiverseSaved || state.player.cheatUrza){
       psBtn.disabled = false;
       psBtn.textContent = 'Plane Shift ';
