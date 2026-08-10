@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Path of the Planeswalker — Strategy Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Pirata+One&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@500;700&display=swap');
+
+:root{
+  --paper:#1a1613;
+  --ink:#d9cbaa;
+  --gold:#c9962a;
+  --blue:#9a8ac9;
+  --red:#a1372b;
+  --green:#7a9463;
+  --rule:#5a4f3d;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:#0d0b08;
+  font-family:'Cormorant Garamond', serif;
+  color:var(--ink);
+  display:flex; justify-content:center;
+  padding:28px 12px;
+}
+.book{
+  max-width:820px; width:100%;
+  background:var(--paper);
+  box-shadow:0 0 0 2px var(--gold), 10px 10px 0 #000;
+}
+.cover{
+  background:linear-gradient(160deg, #0f1830 0%, #1a2540 45%, #301a38 100%);
+  color:#f2e9d2; text-align:center; padding:48px 40px 40px;
+  border-bottom:6px solid var(--gold);
+}
+.cover .eyebrow{ font-family:'Cinzel', serif; font-size:0.7rem; letter-spacing:0.15em; color:var(--gold); margin-bottom:18px; }
+.cover h1{
+  font-family:'Cinzel Decorative', serif; font-weight:900;
+  font-size:clamp(1.8rem, 5.5vw, 2.8rem); margin:0 0 8px;
+  text-shadow:3px 3px 0 rgba(0,0,0,0.5);
+}
+.cover .sub{ font-family:'Pirata One', serif; font-size:1.1rem; color:#c9b8ea; }
+
+.content{ padding:36px 44px 48px; }
+p.hype-open{ font-family:'Pirata One', serif; font-size:1.15rem; color:var(--gold); text-align:center; line-height:1.5; margin:0 0 28px; }
+
+h2.entry-title{
+  font-family:'Pirata One', serif; color:var(--blue); font-size:1.4rem;
+  margin:38px 0 4px; padding-bottom:8px; position:relative; border-bottom:1px solid var(--rule);
+}
+h2.entry-title:first-child{ margin-top:0; }
+h2.entry-title::after{
+  content:'✠'; position:absolute; left:50%; bottom:-9px; transform:translateX(-50%);
+  background:var(--paper); color:var(--gold); padding:0 10px; font-family:'Cinzel', serif; font-size:0.7rem;
+}
+
+p.body-p{ font-size:1.06rem; line-height:1.7; margin:0 0 12px; }
+p.body-p b{ color:var(--gold); }
+p.body-p .shout{ font-family:'Cinzel', serif; letter-spacing:0.03em; color:var(--gold); }
+
+.callout{
+  border:1px solid var(--gold); background:rgba(201,150,42,0.08); padding:14px 18px; margin:16px 0;
+  font-size:1rem; line-height:1.6; position:relative;
+}
+.callout .label{
+  font-family:'Cinzel Decorative', serif; font-size:0.85rem; letter-spacing:0.04em; color:var(--gold);
+  display:block; margin-bottom:6px; text-transform:uppercase;
+}
+.callout.warn{ border-color:var(--red); background:rgba(161,55,43,0.1); }
+.callout.warn .label{ color:#e8a09a; }
+.callout.tip{ border-color:var(--blue); background:rgba(154,138,201,0.08); }
+.callout.tip .label{ color:var(--blue); }
+
+table.stat-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:0.98rem; }
+table.stat-table th{
+  font-family:'Cinzel', serif; font-size:0.72rem; letter-spacing:0.05em; text-transform:uppercase;
+  color:var(--gold); text-align:left; padding:7px 10px; border-bottom:1px solid var(--gold);
+}
+table.stat-table td{ padding:7px 10px; border-bottom:1px solid var(--rule); }
+
+h3.plane-title{
+  font-family:'Cinzel', serif; font-size:0.95rem; letter-spacing:0.05em; text-transform:uppercase;
+  color:var(--gold); margin:28px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--rule);
+}
+table.follower-table{ width:100%; border-collapse:collapse; margin:8px 0 20px; font-size:0.93rem; }
+table.follower-table th{
+  font-family:'Cinzel', serif; font-size:0.68rem; letter-spacing:0.04em; text-transform:uppercase;
+  color:var(--blue); text-align:left; padding:5px 8px; border-bottom:1px solid var(--rule);
+}
+table.follower-table td{ padding:7px 8px; border-bottom:1px solid rgba(90,79,61,0.4); vertical-align:top; }
+table.follower-table td.f-name{ color:var(--gold); font-weight:600; white-space:nowrap; }
+table.follower-table td.f-race{ color:#a99b7a; font-style:italic; white-space:nowrap; }
+
+ul.tip-list{ margin:0 0 14px; padding-left:22px; }
+ul.tip-list li{ font-size:1.04rem; line-height:1.65; margin-bottom:8px; }
+ul.tip-list li b{ color:var(--gold); }
+
+.footer{ text-align:center; padding:28px; font-family:'Cinzel', serif; font-size:0.7rem; color:#8a7f66; border-top:1px solid var(--rule); }
+</style>
+</head>
+<body>
+<div class="book">
+
+  <div class="cover">
+    <div class="eyebrow">✠ GUILDPACT INTERACTIVE PRESENTS ✠</div>
+    <h1>PATH OF THE PLANESWALKER</h1>
+    <div class="sub">The Champion's Strategy Grimoire</div>
+  </div>
+
+  <div class="content">
+
+    <p class="hype-open">Hear this, spark-touched wanderer! The multiverse does not reward the timid, and neither does this tome. Every secret bound within these pages has been tested in the fires of real combat and cross-examined against the very code that governs your fate. Read on, and walk into Amonkhet with the confidence of one who has already won.</p>
+
+    <h2 class="entry-title">Know Thy Foe</h2>
+    <p class="body-p">Mark this well, for it is the single truth that separates the reckless from the triumphant: <b>not every horror in these halls is cut from the same cloth.</b> Our own scrying revealed the shape of the threat you truly face — and it may astonish you.</p>
+    <table class="stat-table">
+      <tr><th>The Enemy</th><th>How Often You'll Meet Them</th><th>What You're Truly Facing</th></tr>
+      <tr><td>Common Rabble</td><td>Nearly every chamber</td><td>Fodder! A fresh spark fells these in two or three strikes and barely feels the sting.</td></tr>
+      <tr><td>Champions (Minibosses)</td><td>Every fifth floor</td><td>Now the trial begins in earnest — these foes hit with real weight. Respect them.</td></tr>
+      <tr><td>Plane Bosses</td><td>Once, at each plane's heart</td><td>The mightiest guardians outside Amonkhet itself. Come prepared, or come broken.</td></tr>
+      <tr><td>Nicol Bolas</td><td>The final reckoning</td><td>He measures himself against YOUR level, not the depths you've crawled. There is no shortcut here.</td></tr>
+    </table>
+    <div class="callout tip">
+      <span class="label">✦ A Word of Counsel ✦</span>
+      Hoard not your finest potions against common rabble — you'll scarcely need them! Save your Second Wind and your rarest draughts for Champions and Plane Bosses. This is the discipline of those who survive.
+    </div>
+
+    <h2 class="entry-title">The Feats Worth Your Oath</h2>
+    <p class="body-p">Choose your path wisely, for not all gifts are equal. Our counsel names these above all others:</p>
+    <ul class="tip-list">
+      <li><b>Second Wind</b> — your last defense against ruin. A burst of healing and a cleansed affliction, once between rests. Hold it in reserve for the moment true peril finds you.</li>
+      <li><b>Reserves</b> — willpower made manifest, refilling hunger and thirst once between rests. Invaluable for those who venture far before making camp.</li>
+      <li><b>Keen Senses</b> — widens the reach of your instinct for hidden doors. A quiet gift, but one that compounds with every floor you fully claim.</li>
+      <li><b>Artificer's Eye</b> — transmute your surplus arms into true power without ever seeking a smith. What was clutter becomes strength.</li>
+    </ul>
+
+    <h2 class="entry-title">Arming Yourself for the Long Road</h2>
+    <p class="body-p">Here is a truth few travelers grasp: your strength in the marketplace does not wither merely because your level has reached its peak. The finest smiths measure their wares against how much of the multiverse you have already tamed — so do not turn from the blacksmith's stall simply because your experience has run its course!</p>
+    <div class="callout">
+      <span class="label">✦ Did You Know? ✦</span>
+      To merge twin blades or matching plate is to fuse them into something far greater — up to four tiers of ascension await. Sell not your duplicates for scraps of gold when they might instead become legend.
+    </div>
+
+    <h2 class="entry-title">Gather Your Companions</h2>
+    <p class="body-p">Two allies may walk beside you, each armed as fully as you yourself. Heed these truths of companionship:</p>
+    <ul class="tip-list">
+      <li>Entrust a companion with a single draught, and they shall drink it themselves the moment their vigor falters below half. Set this once, and forget your worry.</li>
+      <li>Should you part ways with an ally, fear not — their arms and provisions return to your own pack, never lost.</li>
+    </ul>
+    <div class="callout tip">
+      <span class="label">✦ On Planeswalkers ✦</span>
+      There is no separate roster of planeswalker allies — any soul listed below might turn out to be one. It changes nothing about their strength, their perk, or their words; it changes only whether they can follow you when the spark next carries you onward. An ordinary companion stays behind, bound to the plane where you found them, the moment you shift away. A planeswalker walks with you anywhere. The odds start modest — roughly one recruit in eight, early on — and climb the further you've journeyed, capped at one such discovery per plane. Don't be discouraged if your first few planes yield none; the multiverse rewards patience here more than searching.
+    </div>
+
+    <p class="body-p">Every soul who might walk beside you, plane by plane — who they are, and what they bring to a fight. The "Ability" column marks those with an active power on a cooldown; everyone else contributes through their passive perk alone.</p>
+
+    <h3 class="plane-title">Ravnica — One Voice Per Guild</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Guild</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Warden Petrin Ashcombe</td><td class="f-race">Azorius</td><td>Dry, dutiful, and none too pleased about the depths you're dragging her into. +2 AC while active. <b>Binding Writ</b> stuns the nearest foe for 2 turns.</td></tr>
+      <tr><td class="f-name">Sergeant Kael Dorn</td><td class="f-race">Boros</td><td>An off-duty soldier who never really clocked out. +2 attack while active. <b>Battle Shout</b> grants you +2 attack for 6 turns.</td></tr>
+      <tr><td class="f-name">The Quiet One</td><td class="f-race">Dimir</td><td>No name given, none asked for. +1 attack, +1 AC while active. <b>Ambush</b> strikes from the shadows for heavy damage.</td></tr>
+      <tr><td class="f-name">Mosswarden Ilyra</td><td class="f-race">Golgari</td><td>Unbothered by death, determined you won't test her theory on yourself. +1 AC, heals you on nearby kills, senses secret doors. <b>Spreading Rot</b> poisons the nearest foe.</td></tr>
+      <tr><td class="f-name">Brakka Stormfist</td><td class="f-race">Gruul</td><td>Finally, someone who wants to hit things. +3 attack, -1 AC while active — reckless, but it lands hard. <b>Savage Blow</b> deals massive single-target damage.</td></tr>
+      <tr><td class="f-name">Apprentice Fennik</td><td class="f-race">Izzet</td><td>Every plan either works enormously or explodes. Statistically, both. +2 attack while active. <b>Wild Bolt</b> blasts every enemy near you.</td></tr>
+      <tr><td class="f-name">Collector Marrow</td><td class="f-race">Orzhov</td><td>Everything's a loan, and you're the collateral. +1 attack, and always skims extra gold off every kill — no activation needed.</td></tr>
+      <tr><td class="f-name">Vex the Knife</td><td class="f-race">Rakdos</td><td>A partner, at last — try to make dying entertaining. +2 attack while active. <b>Flourish</b> strikes twice in a flashy combo.</td></tr>
+      <tr><td class="f-name">Sister Bramblewood</td><td class="f-race">Selesnya</td><td>Growth finds a way, even down here. +1 AC, heals you 5 HP on every descent. <b>Mending Growth</b> heals a solid chunk of missing HP.</td></tr>
+      <tr><td class="f-name">Biomancer Thess</td><td class="f-race">Simic</td><td>The improvements are permanent, she promises. +1 attack, +1 AC, and a permanent +5 max HP the moment you recruit her. <b>Adaptive Ward</b> grants a temporary AC boost.</td></tr>
+    </table>
+
+    <h3 class="plane-title">Innistrad</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Race</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Old Thistle</td><td class="f-race">Human</td><td>Silver in the blade, salt in the pocket — a grizzled survivor's checklist. +1 attack, +1 AC while active.</td></tr>
+      <tr><td class="f-name">Greta Wolfsbane</td><td class="f-race">Werewolf-touched Human</td><td>Warns you plainly about the nights she isn't herself. +2 attack while active.</td></tr>
+      <tr><td class="f-name">Sister Agnes</td><td class="f-race">Human Cathar</td><td>Buried three parishes' worth of the almost-dead — doesn't plan to bury you too. +2 AC while active, steady and defensive.</td></tr>
+      <tr><td class="f-name">Dr. Elwin Calloway</td><td class="f-race">Human Alchemist</td><td>Has stitched worse together with less. Heals you a little whenever an enemy falls nearby.</td></tr>
+      <tr><td class="f-name">Bram Ashgrove</td><td class="f-race">Human Skaberen</td><td>Grafted worse onto himself than what's chasing you. +2 attack, +1 AC while active.</td></tr>
+    </table>
+
+    <h3 class="plane-title">Kaladesh</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Race</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Pia Cogsworth</td><td class="f-race">Human Inventor</td><td>Built her own arm — mostly works. +1 attack, +1 AC while active.</td></tr>
+      <tr><td class="f-name">Zzeraz</td><td class="f-race">Aetherborn</td><td>Doesn't have long, means to make it count. +2 attack while active.</td></tr>
+      <tr><td class="f-name">Rashmi Cogwell</td><td class="f-race">Human Aeronaut</td><td>Every looted gear funds the next invention. +1 attack, and skims extra gold off every kill.</td></tr>
+      <tr><td class="f-name">Tezza Wren</td><td class="f-race">Human Engineer</td><td>A renegade who doesn't wait for permission. +1 attack, +1 AC while active.</td></tr>
+      <tr><td class="f-name">Old Sazz</td><td class="f-race">Vedalken Artificer</td><td>Has calculated the odds and come anyway. +2 AC while active — precise, careful company.</td></tr>
+    </table>
+
+    <h3 class="plane-title">Zendikar</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Race</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Kiris Windrunner</td><td class="f-race">Kor</td><td>Has made peace with a land that wants you dead. +1 attack, +1 AC while active.</td></tr>
+      <tr><td class="f-name">Grubdoll</td><td class="f-race">Goblin</td><td>Boom. Not yet — later boom. +2 attack, -1 AC while active.</td></tr>
+      <tr><td class="f-name">Talus Ember</td><td class="f-race">Elf Ranger</td><td>Makes sure the land gives a little back. +1 attack, heals you a little on nearby kills.</td></tr>
+      <tr><td class="f-name">Anowon's Shadow</td><td class="f-race">Vampire</td><td>Has hunted these hedrons longer than you've been alive. +2 attack, heals you a little on nearby kills.</td></tr>
+      <tr><td class="f-name">Sarkhan's Old Guide</td><td class="f-race">Human Wayfarer</td><td>Has mapped half this plane; the other half mapped him first. +1 attack, +1 AC while active.</td></tr>
+    </table>
+
+    <h3 class="plane-title">Theros</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Race</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Kallista</td><td class="f-race">Satyr</td><td>The gods are watching — try to look heroic. +1 attack, +1 AC while active.</td></tr>
+      <tr><td class="f-name">Theron</td><td class="f-race">Returned Soldier</td><td>Has died before; wasn't so bad, wasn't good either. +2 attack while active.</td></tr>
+      <tr><td class="f-name">Iodessa</td><td class="f-race">Human Oracle</td><td>Has seen how this ends and comes anyway. +1 AC while active — quietly steadying company.</td></tr>
+      <tr><td class="f-name">Philona</td><td class="f-race">Human Hoplite</td><td>Her shield has held worse lines than this. +1 attack, +2 AC while active.</td></tr>
+      <tr><td class="f-name">Actaeon</td><td class="f-race">Centaur</td><td>The wilds don't forgive hesitation, and neither does he. +2 attack while active.</td></tr>
+    </table>
+
+    <h3 class="plane-title">Ixalan</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Race</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Vance Rook</td><td class="f-race">Human Pirate</td><td>Gold in these ruins, and teeth — mostly teeth. +2 attack while active.</td></tr>
+      <tr><td class="f-name">Ixchel</td><td class="f-race">River Heralds' Merfolk</td><td>The river remembers everything that's happened here. +1 attack, +1 AC while active.</td></tr>
+      <tr><td class="f-name">Brother Tomas</td><td class="f-race">Human Conquistador</td><td>Came for gold and glory, settled for staying alive. +2 AC while active — a sturdy shield at your side.</td></tr>
+      <tr><td class="f-name">Kess Saltborn</td><td class="f-race">Human Pirate</td><td>Every wreck has a story and a price tag — only one interests her. +2 attack, and skims extra gold off every kill.</td></tr>
+      <tr><td class="f-name">Quetzil</td><td class="f-race">Sun Empire Dinosaur-rider</td><td>The sun favors the bold, and he's decided that's him. +1 attack, +1 AC while active.</td></tr>
+    </table>
+
+    <h3 class="plane-title">Dominaria</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Race</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Jorun Vale</td><td class="f-race">Human Knight</td><td>Benalia taught him to hold a line; he still remembers how. +1 attack, +2 AC while active.</td></tr>
+      <tr><td class="f-name">Ashwood</td><td class="f-race">Elf</td><td>Yavimaya doesn't forgive trespassers — she does, sometimes. +2 attack while active.</td></tr>
+      <tr><td class="f-name">Meria Stormvale</td><td class="f-race">Human Wizard</td><td>Three wars taught her every spell worth knowing. +1 attack while active — a seasoned hand in a fight.</td></tr>
+      <tr><td class="f-name">Teferi's Apprentice</td><td class="f-race">Human Mage</td><td>Time is fragile here; he tries not to break it further. +1 AC while active — measured, careful company.</td></tr>
+      <tr><td class="f-name">Grix Halloway</td><td class="f-race">Human Mercenary</td><td>Has fought in every era this plane's had. +2 attack while active.</td></tr>
+    </table>
+
+    <h3 class="plane-title">Amonkhet</h3>
+    <table class="follower-table">
+      <tr><th>Name</th><th>Race</th><th>Personality &amp; Contribution</th></tr>
+      <tr><td class="f-name">Neru</td><td class="f-race">Human Initiate</td><td>Passed three of the Trials, doesn't intend to fail this one. +1 attack, +1 AC while active.</td></tr>
+      <tr><td class="f-name">Djeru's Shadow</td><td class="f-race">Human Initiate</td><td>Bolas took everything from this place — she'd like some back. +2 attack while active.</td></tr>
+      <tr><td class="f-name">Hazoret's Faithful</td><td class="f-race">Human Zealot</td><td>The Trials made him reckless; it's worked out so far. +2 attack, -1 AC while active.</td></tr>
+      <tr><td class="f-name">Oketra's Anointed</td><td class="f-race">Human Soldier</td><td>Discipline held this line long before you arrived. +2 AC while active — steady, disciplined company.</td></tr>
+      <tr><td class="f-name">Samut's Second</td><td class="f-race">Human Rebel</td><td>Relieved this fight isn't hers alone anymore. +1 attack, heals you a little on nearby kills.</td></tr>
+    </table>
+
+    <h2 class="entry-title">On Rest and Ruin</h2>
+    <p class="body-p">A Short Rest halves what still binds your abilities. A Long Rest severs those bindings entirely and restores you whole — provided you carry food and water enough. And mark this: rest alone renews your Second Wind and your Reserves. No patience, no waiting out the hours, will return them to you otherwise.</p>
+    <div class="callout warn">
+      <span class="label">✦ Heed This Warning ✦</span>
+      Exhaustion is a thief that steals from your very vitality the longer you deny yourself rest. When the warnings come, do not press onward for "one more chamber" — that hubris has ended more journeys than any blade.
+    </div>
+    <p class="body-p">A Bag of Holding is rarer than any relic in these halls — expect no more than two across an entire pilgrimage. When fortune grants you one, fill it with your bulkiest draughts and provisions, not idle trinkets.</p>
+
+    <h2 class="entry-title">A Hidden Door Demands a Search</h2>
+    <p class="body-p">Mark this well, for it has caught many a hasty adventurer off guard: finding a hidden door is only half the trial. The door glows <b>amber</b> once your instincts (or your Keen Senses) reveal it — but it remains sealed shut. Somewhere in that very room or the corridor leading to it waits a hidden switch, invisible until the door itself is found. Only by discovering and triggering that switch will the door turn <b>green</b> and yield its passage.</p>
+    <div class="callout tip">
+      <span class="label">✦ A Word of Counsel ✦</span>
+      Do not simply walk away from a sealed hidden door in frustration — the switch that opens it is always somewhere close at hand, guaranteed to be reachable. Search the room thoroughly before moving on.
+    </div>
+    <p class="body-p">Keen Senses now reaches a full four tiles instead of three, granting more warning before you stumble upon a hidden door — precious time better spent scouring the room for its switch.</p>
+
+    <h2 class="entry-title">Sanctuary Has Its Limits</h2>
+    <p class="body-p">A vendor's floor is sanctuary from a distance — no horror will cross into it, and none will approach you from afar while you linger there. Guild abilities and spells still cannot be loosed from within its bounds; those reach too far to count as fair combat from safety. But this protection has an edge: a creature already standing at your side, blade to blade, will still swing at you — and you may swing back plainly, with your own weapon, as in any other fight.</p>
+    <div class="callout tip">
+      <span class="label">✦ A Word of Counsel ✦</span>
+      Should some creature plant itself in the very corridor leading from your sanctuary — often after a hidden door lays bare a path you didn't expect — do not despair. Simply strike it down as you would any foe. Sanctuary keeps distant threats at bay; it was never meant to leave you defenseless against one already within arm's reach.
+    </div>
+
+    <h2 class="entry-title">The Sealed Chamber Shows No Mercy</h2>
+    <p class="body-p">Take this to heart above all: an ambush chamber or a boss's sanctum seals <b>every</b> door the instant your presence is known — not merely one. There is no slipping free to gather your strength once you have crossed the threshold. Spend your cooldowns and your potions before you enter, for once sealed, only victory or ruin awaits.</p>
+
+    <h2 class="entry-title">The Law of the Multiverse</h2>
+    <p class="body-p">Before the great work is finished, the spark's path follows strict and ancient rule — know it now, lest you mistake fate for malfunction:</p>
+    <ul class="tip-list">
+      <li>Five trials must be completed upon your current plane before the spark will carry you onward at all.</li>
+      <li>Your destination is never yours to choose — the spark alone decides where you land.</li>
+      <li>Once you have left a plane behind, you may not return to it by will alone — not until the final reckoning is complete. This is no flaw in the weave. It is the tale itself.</li>
+    </ul>
+    <p class="body-p">Yet when Bolas at last falls, the multiverse opens wide before you — any plane, any moment, Ravnica included, entirely by your own choosing.</p>
+
+    <h2 class="entry-title">The Final Reckoning</h2>
+    <p class="body-p">Amonkhet's gates shatter once you have proven your worth across the six planes beyond it — and from that moment, every shift carries you straight toward your destiny, chance no longer a factor.</p>
+    <p class="body-p">Here is the truth few expect: Bolas measures his own might against your <b>level</b> alone, not the depths you have plundered. No amount of extra floor-crawling will soften this blow — so arm yourself well rather than grind in vain. Enter with your Second Wind held ready, your finest gear upon you, and your guild's own signature power primed to strike.</p>
+
+    <h2 class="entry-title">Beyond the Reckoning: The Endless Road</h2>
+    <p class="body-p">Should you triumph, the road need not end! But know this — your level cannot climb past its fiftieth rung, and once all six planes lie conquered, that well of growth runs dry too. The horrors below, however, know no such limit, and grow mightier with every step you take. In time you shall find the depth beyond which even you cannot pass. This is no failing of the design — it is the shape of the challenge itself. Claim your depth, and wear it with pride.</p>
+    <div class="callout warn">
+      <span class="label">✦ He Has Not Forgotten ✦</span>
+      Do not grow too comfortable in your victory. Nicol Bolas is patient, and patience does not forgive. From time to time, on any plane but the one where you first struck him down, he will find you again — tougher than before, and never announcing himself gently. Defeat him again, and he'll yield a fine reward for the trouble. He always comes back eventually.
+    </div>
+
+    <h2 class="entry-title">A Final Counsel, By Stage</h2>
+    <table class="stat-table">
+      <tr><th>Your Standing</th><th>Where to Turn Your Will</th></tr>
+      <tr><td>New Spark (Lv 1-3)</td><td>Explore every corner without fear — common foes pose little threat. Claim Keen Senses early.</td></tr>
+      <tr><td>The Long Middle</td><td>Take merging seriously now. Give Champions their due respect. Welcome every ally fate offers.</td></tr>
+      <tr><td>Approaching Amonkhet</td><td>Keep your emergency gifts charged before any sealed chamber. Watch your exhaustion closely.</td></tr>
+      <tr><td>The Bolas Reckoning</td><td>Your gear must be ready — your level need not climb further.</td></tr>
+      <tr><td>The Endless Road</td><td>Wander freely, finish what remains undone, and claim your ceiling with honor.</td></tr>
+    </table>
+
+    <p class="hype-open" style="margin-top:30px;">Now go, Planeswalker. The multiverse will not save itself.</p>
+
+  </div>
+
+  <div class="footer">GUILDPACT INTERACTIVE — THE CHAMPION'S STRATEGY GRIMOIRE</div>
+</div>
+</body>
+</html>

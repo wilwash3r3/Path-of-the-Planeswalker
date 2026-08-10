@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Path of the Planeswalker — Instruction Manual</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Pirata+One&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700;900&display=swap');
+
+:root{
+  --paper:#1a1613;
+  --paper-dark:#14100d;
+  --paper-shadow:#33281a;
+  --ink:#d9cbaa;
+  --gold:#c9962a;
+  --blue:#9a8ac9;
+  --red:#a1372b;
+  --rule:#5a4f3d;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:#141110;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 3px);
+  font-family:'Cormorant Garamond', serif;
+  color:var(--ink);
+  display:flex;
+  justify-content:center;
+  padding:28px 12px;
+}
+
+.book{
+  max-width:840px;
+  width:100%;
+  background:var(--paper);
+  box-shadow:0 0 0 2px var(--ink), 10px 10px 0 var(--paper-shadow), 14px 14px 0 rgba(0,0,0,0.35);
+  position:relative;
+}
+
+.page{
+  padding:52px 56px 44px;
+  border-bottom:3px dashed var(--rule);
+  position:relative;
+}
+.page:last-child{border-bottom:none;}
+.page::before{
+  content: attr(data-pagenum);
+  position:absolute;
+  bottom:14px;
+  right:20px;
+  font-family:'Cinzel', serif;
+  font-size:9px;
+  color:var(--rule);
+}
+
+/* ---------- Cover ---------- */
+.cover{
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 45%),
+    linear-gradient(160deg, #0f1830 0%, #1a2540 45%, #301a38 100%);
+  color:#f2e9d2;
+  text-align:center;
+  padding:64px 40px 56px;
+  border-bottom:6px solid var(--gold);
+}
+.cover .eyebrow{
+  font-family:'Cinzel', serif;
+  font-size:11px;
+  letter-spacing:0.15em;
+  color:#e8c14f;
+  margin-bottom:26px;
+}
+.cover h1{
+  font-family:'Cinzel Decorative', serif;
+  font-weight:900;
+  font-size:clamp(2.1rem, 6.2vw, 3.7rem);
+  line-height:1.15;
+  margin:0 0 10px;
+  text-shadow:4px 4px 0 rgba(0,0,0,0.5);
+  letter-spacing:0.02em;
+}
+.cover h1 span{color:#e8c14f;}
+.cover .subhead{
+  font-family:'Pirata One', serif;
+  font-size:0.95rem;
+  color:#c9b8ea;
+  margin-bottom:34px;
+}
+.cover .badge-row{
+  display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+  margin-bottom:38px;
+}
+.cover .badge{
+  font-family:'Cinzel', serif;
+  font-size:8px;
+  border:2px solid #e8c14f;
+  color:#e8c14f;
+  padding:8px 10px;
+  background:rgba(0,0,0,0.25);
+}
+.rose-window{
+  width:150px; height:150px; margin:0 auto;
+  filter:drop-shadow(0 0 10px rgba(201,150,42,0.35));
+}
+.cover .tagline{
+  margin-top:28px;
+  font-family:'Cormorant Garamond', serif;
+  font-size:0.95rem;
+  color:#f2e9d2;
+  max-width:480px;
+  margin-left:auto; margin-right:auto;
+  line-height:1.6;
+}
+
+/* ---------- Shared page furniture ---------- */
+h2.section-title{
+  font-family:'Pirata One', serif;
+  font-size:1.5rem;
+  color:var(--blue);
+  margin:0 0 6px;
+  display:flex; align-items:center; gap:12px;
+}
+h2.section-title .num{
+  font-family:'Cinzel', serif;
+  font-size:0.85rem;
+  background:var(--ink); color:var(--paper);
+  padding:6px 9px;
+}
+.rule{
+  height:1px; background:var(--rule);
+  margin:10px 0 22px;
+  position:relative;
+}
+.rule::after{
+  content:'✠';
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  background:var(--paper); color:var(--gold);
+  padding:0 14px; font-size:1rem;
+}
+p, li{ font-size:0.98rem; line-height:1.75; }
+.dropcap::first-letter{
+  font-family:'UnifrakturCook', serif;
+  font-size:3.4rem; line-height:0.7;
+  float:left; padding:6px 8px 0 0;
+  color:var(--gold);
+}
+.callout{
+  border:3px solid var(--ink);
+  background:var(--paper-dark);
+  padding:16px 20px;
+  margin:18px 0;
+  box-shadow:5px 5px 0 var(--paper-shadow);
+}
+.callout .label{
+  font-family:'Cinzel', serif; font-size:9px; color:var(--red);
+  margin-bottom:8px; display:block;
+}
+
+/* ---------- TOC ---------- */
+.toc-list{ list-style:none; padding:0; margin:0; }
+.toc-list li{
+  display:flex; align-items:baseline; gap:8px;
+  font-family:'Cormorant Garamond', serif;
+  margin-bottom:10px;
+}
+.toc-list .dots{ flex:1; border-bottom:2px dotted var(--rule); margin:0 4px; transform:translateY(-4px); }
+.toc-list .n{ font-family:'Cinzel', serif; font-size:9px; color:var(--gold); }
+
+/* ---------- Controller / keyboard map ---------- */
+.keymap{
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+  margin:24px 0;
+}
+.key-callout{
+  border:2px solid var(--ink); background:#241f18; padding:12px 14px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.key-callout .kcode{
+  font-family:'Cinzel', serif; font-size:9px;
+  background:var(--ink); color:var(--paper); padding:6px 8px; flex-shrink:0; min-width:64px; text-align:center;
+}
+.key-callout .kdesc{ font-size:0.85rem; line-height:1.5; }
+.key-callout .kdesc b{ display:block; font-family:'Pirata One', serif; font-size:0.78rem; color:var(--blue); margin-bottom:2px; }
+
+/* ---------- Guild roster ---------- */
+.guild-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+.guild-card{
+  border:2px solid var(--ink); padding:14px 16px; background:var(--paper-dark);
+  position:relative;
+}
+.guild-card .gname{ font-family:'Pirata One', serif; font-size:0.9rem; margin-bottom:4px; }
+.guild-card .gflavor{ font-style:italic; font-size:0.82rem; color:#a89572; margin-bottom:6px; }
+.guild-card .gability{ font-size:0.82rem; }
+.guild-card .gability b{ color:var(--red); }
+
+/* ---------- Stat block table ---------- */
+table.statblock{ width:100%; border-collapse:collapse; margin:18px 0; font-size:0.88rem; }
+table.statblock th, table.statblock td{ border:2px solid var(--ink); padding:8px 10px; text-align:left; }
+table.statblock th{ background:var(--ink); color:var(--paper); font-family:'Pirata One', serif; font-size:0.72rem; }
+table.statblock tr:nth-child(even) td{ background:var(--paper-dark); }
+
+/* ---------- Warning / legal page ---------- */
+.warning-box{
+  border:4px solid var(--red);
+  padding:20px 24px;
+  background:#241812;
+  margin:20px 0;
+}
+.warning-box .wtitle{
+  font-family:'Pirata One', serif; color:var(--red); font-size:1rem; margin-bottom:10px;
+  display:flex; align-items:center; gap:10px;
+}
+.warning-box .wtitle .tri{
+  width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:22px solid var(--red);
+  position:relative;
+}
+.warning-box .wtitle .tri::after{ content:'!'; position:absolute; top:8px; left:-3px; color:#f7e9c8; font-family:'Pirata One',serif; font-size:0.85rem; }
+
+.backcover{
+  background:linear-gradient(160deg,#1a2540,#0f1830);
+  color:#c9b8ea;
+  text-align:center;
+  padding:50px 40px;
+}
+/* ---------- Bestiary ---------- */
+.bestiary-heading{
+  font-family:'Pirata One', serif; font-size:0.85rem; color:var(--gold);
+  margin:22px 0 10px; text-transform:uppercase; letter-spacing:0.04em;
+}
+.bestiary-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px;
+}
+.bestiary-card{
+  display:flex; align-items:center; gap:12px;
+  border:2px solid var(--ink); background:var(--paper-dark);
+  padding:8px 10px;
+}
+.bestiary-card .beast-icon{ flex-shrink:0; background:#1c2a1a; border:1px solid var(--rule); }
+.bestiary-card div{ display:flex; flex-direction:column; font-size:0.78rem; }
+.bestiary-card b{ font-family:'Pirata One', serif; font-size:0.7rem; color:var(--blue); margin-bottom:2px; }
+.bestiary-card span{ color:#a89572; font-size:0.72rem; line-height:1.3; }
+
+/* ---------- Field guide entries with real in-game icons ---------- */
+.field-entry{
+  display:flex; align-items:flex-start; gap:16px;
+  margin-bottom:16px; padding-bottom:14px;
+  border-bottom:1px dotted var(--rule);
+}
+.field-entry:last-child{ border-bottom:none; }
+.field-entry > div{ flex:1; padding-top:2px; }
+.field-icon{
+  flex-shrink:0; width:32px; height:32px;
+  background:#1c2a1a; border:2px solid var(--ink);
+  image-rendering:pixelated;
+}
+.field-icon-text{
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; background:#1c2a1a;
+}
+
+.backcover .seal{
+  font-family:'Cinzel', serif; font-size:9px; color:#e8c14f;
+  border:2px solid #e8c14f; display:inline-block; padding:10px 16px; margin-bottom:20px;
+}
+.backcover p{ font-size:0.8rem; color:#a89bc9; max-width:460px; margin:8px auto; }
+
+@media (max-width:640px){
+  .page{ padding:36px 22px 32px; }
+  .guild-grid, .keymap{ grid-template-columns:1fr; }
+  .cover h1{ font-size:2.2rem; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+  <!-- COVER -->
+  <section class="page cover" data-pagenum="">
+    <div class="eyebrow">GUILDPACT INTERACTIVE PRESENTS</div>
+    <h1>PATH OF THE<br><span>PLANESWALKER</span></h1>
+    <div class="subhead">◆ A RAVNICA ROGUELIKE ◆</div>
+    <svg class="rose-window" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="80" cy="80" r="70" fill="none" stroke="#c9962a" stroke-width="2"/>
+      <circle cx="80" cy="80" r="58" fill="none" stroke="#c9962a" stroke-width="1.5"/>
+      <circle cx="80" cy="80" r="16" fill="none" stroke="#c9962a" stroke-width="2"/>
+      <g stroke="#c9962a" stroke-width="1.5" fill="none">
+        <path d="M80 10 L80 150 M10 80 L150 80 M27 27 L133 133 M133 27 L27 133"/>
+      </g>
+      <g fill="#7a2030" opacity="0.55">
+        <path d="M80 24 Q92 50 80 64 Q68 50 80 24 Z"/>
+        <path d="M80 136 Q92 110 80 96 Q68 110 80 136 Z"/>
+        <path d="M24 80 Q50 92 64 80 Q50 68 24 80 Z"/>
+        <path d="M136 80 Q110 92 96 80 Q110 68 136 80 Z"/>
+        <path d="M40 40 Q58 54 62 62 Q54 58 40 40 Z"/>
+        <path d="M120 120 Q102 106 98 98 Q106 102 120 120 Z"/>
+        <path d="M40 120 Q54 102 62 98 Q58 106 40 120 Z"/>
+        <path d="M120 40 Q106 58 98 62 Q102 54 120 40 Z"/>
+      </g>
+      <circle cx="80" cy="80" r="9" fill="#c9962a"/>
+    </svg>
+    <div class="badge-row">
+      <span class="badge">10 GUILDS</span>
+      <span class="badge">1 SPARK</span>
+      <span class="badge">∞ FLOORS</span>
+    </div>
+    <div class="tagline">"You didn't ask for the spark. It doesn't care. Read on, agent — the Tenth District isn't going to enforce its own Guildpact."</div>
+  </section>
+
+  <!-- TABLE OF CONTENTS -->
+  <section class="page" data-pagenum="PAGE 02">
+    <h2 class="section-title"><span class="num">§1</span> TABLE OF CONTENTS</h2>
+    <div class="rule"></div>
+    <ul class="toc-list">
+      <li>Thank You For Choosing Guildpact Interactive<span class="dots"></span><span class="n">03</span></li>
+      <li>The Story So Far<span class="dots"></span><span class="n">04</span></li>
+      <li>Keyboard Configuration<span class="dots"></span><span class="n">05</span></li>
+      <li>Choosing Your Guild<span class="dots"></span><span class="n">06</span></li>
+      <li>Races of Ravnica<span class="dots"></span><span class="n">08</span></li>
+      <li>Survival, Combat &amp; The Guild Rivalry Wheel<span class="dots"></span><span class="n">09</span></li>
+      <li>Followers &amp; The Bag of Holding<span class="dots"></span><span class="n">10</span></li>
+      <li>Field Guide: Hazards &amp; Curiosities<span class="dots"></span><span class="n">11</span></li>
+      <li>Vendors &amp; Their Signs<span class="dots"></span><span class="n">12</span></li>
+      <li>Tips From The Guildpact Hotline<span class="dots"></span><span class="n">13</span></li>
+      <li>Bestiary: Know Your Enemy<span class="dots"></span><span class="n">14</span></li>
+      <li>Important Player Information<span class="dots"></span><span class="n">16</span></li>
+    </ul>
+  </section>
+
+  <!-- THANK YOU -->
+  <section class="page" data-pagenum="PAGE 03">
+    <h2 class="section-title"><span class="num">§2</span> THANK YOU</h2>
+    <div class="rule"></div>
+    <p class="dropcap">Thank you for choosing <b>PATH OF THE PLANESWALKER</b>, a role-playing dungeon crawl set on the guild-choked plane of Ravnica — and, for those who survive long enough to earn it, the wider multiverse beyond.</p>
+    <p>To get the most enjoyment from your adventure, please take a few minutes to read through this instruction manual. It contains everything a new agent of the Guildpact needs to know: how to move, how to fight, how not to die of thirst in a stairwell, and what exactly is going on with the rumors of something ancient stirring behind the scenes.</p>
+    <div class="callout">
+      <span class="label">FILE UNDER: GETTING STARTED</span>
+      Save often. Rest when you can. Read every scroll before you sell it. And if a follower tells you to be careful — listen.
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="page" data-pagenum="PAGE 04">
+    <h2 class="section-title"><span class="num">§3</span> THE STORY SO FAR</h2>
+    <div class="rule"></div>
+    <p class="dropcap">The War of the Spark is over. Ravnica is still standing — barely — and the ten guilds have gone back to doing what they do best: politicking, profiteering, and pretending the last invasion didn't happen.</p>
+    <p>You are nobody in particular. A guild agent, freshly assigned to enforce the Guildpact in the depths beneath the Tenth District, where old grudges, worse monsters, and forgotten treasure all wait in equal measure.</p>
+    <p>You don't know it yet, but something is wrong across the wider multiverse — quietly, patiently wrong, in a way that traces back to a name older than any guild charter. Then your spark ignites, and you stop having a say in the matter. The spark decides where you land, one plane at a time, and there's no going back until the trail runs out. Someone else has felt this exact thing before, though — and she isn't willing to let you walk it alone.</p>
+    <div class="callout">
+      <span class="label">A NOTE FROM YOUR MENTOR</span>
+      "I'm not doing this out of the goodness of my heart. I can't chase this thing alone anymore, and you won't survive it without knowing what I know. We do this together, or neither of us makes it."
+    </div>
+  </section>
+
+  <!-- CONTROLS -->
+  <section class="page" data-pagenum="PAGE 05">
+    <h2 class="section-title"><span class="num">§4</span> KEYBOARD CONFIGURATION</h2>
+    <div class="rule"></div>
+    <p>All controls below can be rebound from the <b>⚙ Settings</b> menu at any time. Defaults are shown here.</p>
+    <div class="keymap">
+      <div class="key-callout"><span class="kcode">ARROWS<br>/ WASD</span><span class="kdesc"><b>① MOVE / ATTACK</b>Step into a tile to move. Step into an enemy to swing at it.</span></div>
+      <div class="key-callout"><span class="kcode">SPACE<br>/ E</span><span class="kdesc"><b>② GUILD ABILITY</b>Your signature move. Recharges over a few turns.</span></div>
+      <div class="key-callout"><span class="kcode">I</span><span class="kdesc"><b>③ INVENTORY</b>Equip gear, manage your pack, merge duplicates.</span></div>
+      <div class="key-callout"><span class="kcode">Q</span><span class="kdesc"><b>④ EAT / DRINK</b>Manage hunger and thirst before they manage you.</span></div>
+      <div class="key-callout"><span class="kcode">J</span><span class="kdesc"><b>⑤ STATUS &amp; QUESTS</b>Feats, followers, side quests, multiverse progress.</span></div>
+      <div class="key-callout"><span class="kcode">M</span><span class="kdesc"><b>⑥ MAP</b>Full floor layout. Hover anything for details.</span></div>
+      <div class="key-callout"><span class="kcode">Z</span><span class="kdesc"><b>⑦ QUICK MAGIC</b>Guild spells and scrolls, cast on demand.</span></div>
+      <div class="key-callout"><span class="kcode">R / L</span><span class="kdesc"><b>⑧ REST</b>Short Rest for a quick patch-up. Long Rest to fully recover.</span></div>
+      <div class="key-callout"><span class="kcode">+ / − / ⤢</span><span class="kdesc"><b>⑨ ZOOM</b>Bottom-right of the map. Zooms in on your character and follows you — nothing to lose track of. ⤢ resets to default.</span></div>
+    </div>
+  </section>
+
+  <!-- GUILDS -->
+  <section class="page" data-pagenum="PAGE 06">
+    <h2 class="section-title"><span class="num">§5</span> CHOOSING YOUR GUILD</h2>
+    <div class="rule"></div>
+    <p>Ravnica has ten guilds. Your choice determines your starting gear, your signature ability, and more than a little of how NPCs across the plane will treat you.</p>
+    <div class="guild-grid">
+      <div class="guild-card"><div class="gname">AZORIUS SENATE</div><div class="gflavor">Law, order, endless paperwork.</div><div class="gability">Ability: <b>Detain</b> — stun the nearest threat.</div></div>
+      <div class="guild-card"><div class="gname">BOROS LEGION</div><div class="gflavor">Zeal, fire, and frontal assault.</div><div class="gability">Ability: <b>Battle Cry</b> — rally your attack.</div></div>
+      <div class="guild-card"><div class="gname">HOUSE DIMIR</div><div class="gflavor">Secrets, shadows, quiet murder.</div><div class="gability">Ability: <b>Vanish</b> — short teleport, brief evasion.</div></div>
+      <div class="guild-card"><div class="gname">GOLGARI SWARM</div><div class="gflavor">Rot, ruin, and things that regrow.</div><div class="gability">Ability: <b>Consume</b> — feed on the fallen.</div></div>
+      <div class="guild-card"><div class="gname">CULT OF GRUUL</div><div class="gflavor">Wild fury, unfiltered.</div><div class="gability">Ability: <b>Savage Charge</b> — bonus damage, close range.</div></div>
+      <div class="guild-card"><div class="gname">IZZET LEAGUE</div><div class="gflavor">Mad science, occasionally working.</div><div class="gability">Ability: <b>Spark</b> — an unstable area attack.</div></div>
+      <div class="guild-card"><div class="gname">ORZHOV SYNDICATE</div><div class="gflavor">Debt, contracts, quiet extortion.</div><div class="gability">Ability: <b>Extort</b> — always finding a little extra gold.</div></div>
+      <div class="guild-card"><div class="gname">CULT OF RAKDOS</div><div class="gflavor">Chaos as performance art.</div><div class="gability">Ability: <b>Blood Rite</b> — pay in HP, deal in damage.</div></div>
+      <div class="guild-card"><div class="gname">SELESNYA CONCLAVE</div><div class="gflavor">Community, growth, unity.</div><div class="gability">Ability: <b>Bloom</b> — restorative, life-giving.</div></div>
+      <div class="guild-card"><div class="gname">SIMIC COMBINE</div><div class="gflavor">Evolution, on a deadline.</div><div class="gability">Ability: <b>Adapt</b> — reshape yourself mid-fight.</div></div>
+    </div>
+  </section>
+
+  <!-- RACES -->
+  <section class="page" data-pagenum="PAGE 08">
+    <h2 class="section-title"><span class="num">§6</span> RACES OF RAVNICA</h2>
+    <div class="rule"></div>
+    <p>Every guild offers Human agents as standard issue, plus one guild-specific race with its own quirks:</p>
+    <table class="statblock">
+      <tr><th>RACE</th><th>NOTABLE TRAIT</th></tr>
+      <tr><td>Human</td><td>Adaptable. Bonus HP and gold on every kill.</td></tr>
+      <tr><td>Vedalken (Azorius)</td><td>Precise — small bonus to both attack and AC.</td></tr>
+      <tr><td>Minotaur (Boros)</td><td>Built for the charge. Attack and HP up.</td></tr>
+      <tr><td>Vampire (Dimir)</td><td>Heals on every kill. Never skip a meal again.</td></tr>
+      <tr><td>Devkarin Elf (Golgari)</td><td>Hard to pin down. Dodge and defense up.</td></tr>
+      <tr><td>Centaur (Gruul)</td><td>Simply more HP than anyone expects.</td></tr>
+      <tr><td>Goblin (Izzet)</td><td>Reckless. High attack, thin armor.</td></tr>
+      <tr><td>Ghost (Orzhov)</td><td>Doesn't eat or drink. Can drift through locked doors alone.</td></tr>
+      <tr><td>Viashino (Rakdos)</td><td>Fast and vicious in equal measure.</td></tr>
+      <tr><td>Loxodon (Selesnya)</td><td>An enormous amount of HP.</td></tr>
+      <tr><td>Merfolk (Simic)</td><td>Balanced — small bonus to attack and AC.</td></tr>
+    </table>
+  </section>
+
+  <!-- COMBAT / SURVIVAL -->
+  <section class="page" data-pagenum="PAGE 09">
+    <h2 class="section-title"><span class="num">§7</span> SURVIVAL, COMBAT &amp; RIVALRY</h2>
+    <div class="rule"></div>
+    <p><b>Hunger &amp; Thirst</b> drain steadily as you explore. Let either hit zero and exhaustion sets in — a real penalty, not a suggestion. Eat, drink, and rest accordingly.</p>
+    <p><b>Combat</b> is turn-based: you act, then everything nearby acts back. Attack rolls, armor class, and critical hits all follow familiar tabletop logic.</p>
+    <div class="callout">
+      <span class="label">THE GUILD RIVALRY WHEEL</span>
+      All ten guilds sit on a wheel, each strong against one neighbor and weak against the other — Azorius over Orzhov, Orzhov over Boros, and so on around the circle. Fighting an enemy guild that favors you hits harder. Fighting one you're weak against costs you. Know the wheel, use the wheel.
+    </div>
+    <p><b>Status effects</b> — Poisoned, Paralyzed, and Frightened — all follow familiar tabletop-style rules. Carry an Antidote. You'll thank yourself later.</p>
+  </section>
+
+  <!-- FOLLOWERS -->
+  <section class="page" data-pagenum="PAGE 10">
+    <h2 class="section-title"><span class="num">§8</span> FOLLOWERS &amp; THE BAG OF HOLDING</h2>
+    <div class="rule"></div>
+    <p>You may recruit up to <b>two followers</b> at a time from contacts scattered across the floors. Give them weapons, armor, and trinkets just like your own — and hand off a potion or ration for them to use automatically when things get rough.</p>
+    <p>Followers can be downed in a fight, but not permanently lost. A potion, or any rest — short or long — brings a downed follower right back, and heals whatever injuries the rest of your party is carrying too.</p>
+    <div class="callout">
+      <span class="label">A WORD ON BAGS OF HOLDING</span>
+      Exceptionally rare, and worth every ounce of pack space they don't take up — each grants its own private, unlimited storage tab. You may carry more than one. You should <em>never</em>, under any circumstances, try to store one inside another. The label is very clear on this point. Read the label.
+    </div>
+    <div class="callout">
+      <span class="label">MERGING DUPLICATE GEAR</span>
+      Two copies of the same weapon, armor, or trinket can be fused into one stronger piece — vendors will always do this for a fee, and the price climbs a little each time that piece has already been fused. Learning the right feat lets you fuse gear yourself, straight from your pack, no vendor required.
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="page" data-pagenum="PAGE 11">
+    <h2 class="section-title"><span class="num">§9</span> FIELD GUIDE: HAZARDS &amp; CURIOSITIES</h2>
+    <div class="rule"></div>
+    <p style="font-size:0.8rem; color:#8a7f66; margin-top:-4px;">Symbols below are shown exactly as they appear on your own map screen.</p>
+    <div class="field-entry">
+      <span class="field-icon field-icon-text" style="color:#a8790f;">🔒</span>
+      <div><b>Locked Doors</b> — need a key, the Lockpicking feat, or a Ghost's peculiar talent for walking through walls.</div>
+    </div>
+    <div class="field-entry">
+      <span class="field-icon field-icon-text" style="color:#d9a24a;">◇</span>
+      <div><b>Secret Doors</b> — invisible until you're standing close. Finding one only tells you it's there; a switch hidden somewhere nearby actually opens it. The door glows amber once found and turns green once the switch is thrown.</div>
+    </div>
+    <div class="field-entry">
+      <span class="field-icon field-icon-text" style="color:#c9962a;">◆</span>
+      <div><b>Hidden Switches</b> — stay invisible until their linked door is found. Walk onto one to throw it, opening the door for good.</div>
+    </div>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-chest" width="32" height="32"></canvas>
+      <div><b>Chests</b> — usually treasure. Occasionally something wearing the shape of treasure. Approach at your own pace.</div>
+    </div>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-water" width="32" height="32"></canvas>
+      <div><b>Water Sources</b> — free thirst refills scattered through the dungeon. Most are safe. Some are not. There's no way to tell until you've already taken a sip.</div>
+    </div>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-ambush" width="32" height="32"></canvas>
+      <div><b>Ambush Rooms</b> — step into the wrong room and the door may seal behind you. Someone in there needs saving. Clear the waves, break the seal, collect the reward.</div>
+    </div>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-boss" width="32" height="32"></canvas>
+      <div><b>The Boss Chamber</b> — always the largest room on the floor. Always seals shut the moment you enter. Only one way out: through the boss.</div>
+    </div>
+  </section>
+
+  <!-- VENDORS -->
+  <section class="page" data-pagenum="PAGE 12">
+    <h2 class="section-title"><span class="num">§10</span> VENDORS &amp; THEIR SIGNS</h2>
+    <div class="rule"></div>
+    <p style="font-size:0.8rem; color:#8a7f66; margin-top:-4px;">Each shop type marks itself on the map with its own symbol, shown exactly as it appears in-game.</p>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-shop-magic" width="32" height="32"></canvas>
+      <div><b>Arcane Sundries</b> — scrolls of minor magic, and an enchanter willing to bind a little more power into your gear.</div>
+    </div>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-shop-general" width="32" height="32"></canvas>
+      <div><b>General Store</b> — rations, potions, trinkets, and an escape rope for travelers who'd rather retreat than press on.</div>
+    </div>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-shop-inn" width="32" height="32"></canvas>
+      <div><b>The Wayfarer's Inn</b> — a warm meal, a stiff drink, and a bed. Sleep here to save your progress.</div>
+    </div>
+    <div class="field-entry">
+      <canvas class="field-icon" id="icon-shop-blacksmith" width="32" height="32"></canvas>
+      <div><b>Blacksmith</b> — steel and plate, hammered fresh, for whoever can afford it.</div>
+    </div>
+    <div class="callout">
+      <span class="label">A NOTE ON PROPRIETORS</span>
+      Every shop has a name and a proprietor, not just a price list — hover a vendor on the map to see who you're actually dealing with.
+    </div>
+    <div class="callout" style="border-color:#a1372b;">
+      <span class="label" style="color:#e8a09a;">SANCTUARY RULES</span>
+      No enemy can ever cross into a shop floor, and none will approach one from a distance while you're standing there. Guild abilities and spells still can't be loosed from inside — those reach too far to count as a fair fight. But a foe already at your side will still swing back, so a weapon blocking a doorway is never a true dead end.
+    </div>
+  </section>
+
+  <!-- TIPS -->
+  <section class="page" data-pagenum="PAGE 13">
+    <h2 class="section-title"><span class="num">§11</span> TIPS FROM THE GUILDPACT HOTLINE</h2>
+    <div class="rule"></div>
+    <ul>
+      <li>Merge duplicate gear whenever you can — two ordinary trinkets make one that's actually worth equipping. Learn Artificer's Eye and merging from your own Pack costs nothing at all.</li>
+      <li>Talk to your followers. They notice things you don't, and they're not shy about sharing rumors.</li>
+      <li>Reaching Level 5 changes everything. Don't rush past it without a full pack.</li>
+      <li>Difficulty can be changed in Settings at any time. There is no shame in Easy. There is only shame in dying to a rat you could have avoided.</li>
+      <li>If a vendor mentions a planeswalker who's "been seen less and less lately" — that's not idle gossip. Write it down.</li>
+    </ul>
+  </section>
+
+  <!-- BESTIARY -->
+  <section class="page" data-pagenum="PAGE 14">
+    <h2 class="section-title"><span class="num">§12</span> BESTIARY: KNOW YOUR ENEMY</h2>
+    <div class="rule"></div>
+    <p style="font-size:0.8rem; color:#8a7f66; margin-top:-4px;">A partial field roster. Icons shown exactly as they appear in-game.</p>
+
+    <h3 class="bestiary-heading">Guild Enforcers, Ravnica</h3>
+    <div class="bestiary-grid">
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-azorius" width="36" height="36"></canvas><div><b>Azorius Enforcer</b><span>Detains first, questions later.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-boros" width="36" height="36"></canvas><div><b>Boros Legionnaire</b><span>Charges. Rarely retreats.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-dimir" width="36" height="36"></canvas><div><b>Dimir Agent</b><span>You won't see it coming.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-golgari" width="36" height="36"></canvas><div><b>Golgari Rotfarmer</b><span>Can inflict poison on contact.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-gruul" width="36" height="36"></canvas><div><b>Gruul Berserker</b><span>Wild fury, unfiltered.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-izzet" width="36" height="36"></canvas><div><b>Izzet Chemister</b><span>The explosion is usually intentional.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-orzhov" width="36" height="36"></canvas><div><b>Orzhov Collector</b><span>Here to collect on a debt.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-rakdos" width="36" height="36"></canvas><div><b>Rakdos Cultist</b><span>Chaos, as performance art.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-selesnya" width="36" height="36"></canvas><div><b>Selesnya Warden</b><span>Fights to protect, not to win.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-simic" width="36" height="36"></canvas><div><b>Simic Adapter</b><span>Not the same shape twice.</span></div></div>
+    </div>
+
+    <h3 class="bestiary-heading">Beasts of the Wild</h3>
+    <div class="bestiary-grid">
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-wolf" width="36" height="36"></canvas><div><b>Timber Wolf</b><span>Hunts in packs. Rarely alone.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-werewolf" width="36" height="36"></canvas><div><b>Moonlit Werewolf</b><span>Not the same thing as a wolf. Don't get them confused.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-bat" width="36" height="36"></canvas><div><b>Cave Bat</b><span>Fast, erratic, easy to underestimate.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-boar" width="36" height="36"></canvas><div><b>Wild Boar</b><span>Meat drop on kill. Worth the trouble.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-bear" width="36" height="36"></canvas><div><b>Yavimaya Bear</b><span>Large, slow, hits like it means it.</span></div></div>
+    </div>
+
+    <h3 class="bestiary-heading">Across the Planes</h3>
+    <div class="bestiary-grid">
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-vampire" width="36" height="36"></canvas><div><b>Stromkirk Vampire</b><span>Can inflict fright on contact.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-skeleton" width="36" height="36"></canvas><div><b>Restless Skeleton</b><span>Dominaria's dead don't stay down.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-eldrazi" width="36" height="36"></canvas><div><b>Eldrazi Spawn</b><span>Zendikar's oldest, worst problem.</span></div></div>
+      <div class="bestiary-card"><canvas class="beast-icon" id="beast-giant" width="36" height="36"></canvas><div><b>Dominarian Giant</b><span>Everything about it is larger than advisable.</span></div></div>
+    </div>
+  </section>
+
+  <!-- WARNING / LEGAL -->
+  <section class="page" data-pagenum="PAGE 16">
+    <h2 class="section-title"><span class="num">§13</span> IMPORTANT PLAYER INFORMATION</h2>
+    <div class="rule"></div>
+    <div class="warning-box">
+      <div class="wtitle"><span class="tri"></span> WARNING</div>
+      This game contains guild rivalries, extortion, minor property damage, and at least one elder dragon planeswalker who is aware of you specifically. Reader discretion is advised for anyone who has ever accidentally agreed to a contract they didn't read.
+    </div>
+    <p style="font-size:0.78rem; color:#8a7f66;">PATH OF THE PLANESWALKER ™ is a work of original fan fiction set in the world of Ravnica. All guild names, characters, and locations are used affectionately and without permission from anyone in particular. No guilds were harmed in the making of this manual — the Orzhov Syndicate would simply like everyone to know it retains the right to charge for damages regardless.</p>
+  </section>
+
+  <!-- BACK COVER -->
+  <section class="page backcover" data-pagenum="">
+    <div class="seal">GUILDPACT SEAL OF APPROVAL</div>
+    <p style="font-family:'Pirata One', serif; color:#e8c14f; font-size:1rem;">GOOD LUCK, AGENT.</p>
+    <p>The Tenth District is waiting. So, probably, is something much older than it.</p>
+    <p style="margin-top:24px; font-size:0.7rem;">© GUILDPACT INTERACTIVE — A RAVNICA ROGUELIKE — ALL RIGHTS RESERVED IN THIS PLANE AND AT LEAST TWO OTHERS</p>
+  </section>
+
+</div>
+
+<script>
+// Icons below are redrawn using the exact same canvas drawing logic as the live game,
+// so what you see here matches what you'll see on your own map screen.
+function setupIcon(id){
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#1c2a1a';
+  ctx.fillRect(0,0,32,32);
+  return ctx;
+}
+
+// Chest (from drawItemGlyph, case 'chest')
+(function(){
+  const ctx = setupIcon('icon-chest');
+  const cx=16, cy=17, r=11;
+  ctx.fillStyle = '#c9a227';
+  ctx.fillRect(cx-r*0.75, cy-r*0.1, r*1.5, r*0.8);
+  ctx.beginPath(); ctx.moveTo(cx-r*0.75, cy-r*0.1); ctx.quadraticCurveTo(cx, cy-r*0.85, cx+r*0.75, cy-r*0.1); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = Math.max(1,r*0.12);
+  ctx.beginPath(); ctx.moveTo(cx-r*0.75, cy-r*0.1); ctx.lineTo(cx+r*0.75, cy-r*0.1); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy-r*0.05, r*0.14, 0, Math.PI*2); ctx.stroke();
+})();
+
+// Water source (from the main canvas render loop)
+(function(){
+  const ctx = setupIcon('icon-water');
+  const wcx=16, wcy=16;
+  ctx.fillStyle = '#6fa8d9';
+  ctx.beginPath(); ctx.arc(wcx, wcy, 9, 0, Math.PI*2); ctx.fill();
+  ctx.font = '13px monospace'; ctx.textAlign='center';
+  ctx.fillStyle = '#1a2530';
+  ctx.fillText('~', wcx, wcy+4);
+  ctx.textAlign='left';
+})();
+
+// Ambush-room captive marker (dashed ring + dot + "!")
+(function(){
+  const ctx = setupIcon('icon-ambush');
+  const ccx=16, ccy=16;
+  ctx.strokeStyle = '#d9a24a'; ctx.lineWidth = 1.5; ctx.setLineDash([2,2]);
+  ctx.beginPath(); ctx.arc(ccx, ccy, 11, 0, Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#d9a24a';
+  ctx.beginPath(); ctx.arc(ccx, ccy, 6, 0, Math.PI*2); ctx.fill();
+  ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#1a1610';
+  ctx.fillText('!', ccx, ccy+4);
+  ctx.textAlign = 'left';
+})();
+
+// Boss marker (from drawBossMarker - the gear/cog shape)
+(function(){
+  const ctx = setupIcon('icon-boss');
+  const cx=16, cy=16, r=12;
+  ctx.fillStyle = '#e8c14f';
+  const teeth=10, outerR=r, innerR=r*0.72;
+  ctx.beginPath();
+  for(let i=0;i<teeth*2;i++){
+    const angle=(Math.PI/teeth)*i, rad=i%2===0?outerR:innerR;
+    const x=cx+Math.cos(angle)*rad, y=cy+Math.sin(angle)*rad;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#1a1610'; ctx.beginPath(); ctx.arc(cx,cy,r*0.35,0,Math.PI*2); ctx.fill();
+})();
+
+// ---- Bestiary icons: guild sigils, drawn with the exact in-game path code ----
+function drawAzorius(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=Math.max(1,r*0.16);
+  ctx.beginPath(); ctx.moveTo(cx,cy-r*0.85); ctx.lineTo(cx,cy+r*0.55); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-r*0.7,cy-r*0.5); ctx.lineTo(cx+r*0.7,cy-r*0.5); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx-r*0.7,cy-r*0.15,r*0.22,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx+r*0.7,cy-r*0.15,r*0.22,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-r*0.4,cy+r*0.55); ctx.lineTo(cx+r*0.4,cy+r*0.55); ctx.stroke();
+}
+function drawBoros(ctx,cx,cy,r,color){
+  ctx.fillStyle=color; ctx.strokeStyle=color; ctx.lineWidth=Math.max(1,r*0.16);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy-r*0.9); ctx.lineTo(cx+r*0.24, cy+r*0.15); ctx.lineTo(cx-r*0.24, cy+r*0.15);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx-r*0.5, cy+r*0.22); ctx.lineTo(cx+r*0.5, cy+r*0.22); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy+r*0.22); ctx.lineTo(cx, cy+r*0.8); ctx.stroke();
+}
+function drawDimir(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=Math.max(1,r*0.13);
+  ctx.beginPath();
+  ctx.moveTo(cx-r*0.75, cy);
+  ctx.quadraticCurveTo(cx, cy-r*0.55, cx+r*0.75, cy);
+  ctx.quadraticCurveTo(cx, cy+r*0.55, cx-r*0.75, cy);
+  ctx.closePath(); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,r*0.18,0,Math.PI*2); ctx.fill();
+}
+function drawGolgari(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.lineWidth=Math.max(1,r*0.13); ctx.lineCap='round';
+  ctx.beginPath();
+  const turns=2.1, steps=36;
+  for(let i=0;i<=steps;i++){
+    const t=i/steps, angle=t*turns*Math.PI*2, rad=t*r*0.82;
+    const x=cx+Math.cos(angle)*rad, y=cy+Math.sin(angle)*rad;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+function drawGruul(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.lineWidth=Math.max(1,r*0.18); ctx.lineCap='round';
+  for(let i=-1;i<=1;i++){
+    const off=i*r*0.4;
+    ctx.beginPath();
+    ctx.moveTo(cx-r*0.55+off, cy-r*0.75);
+    ctx.lineTo(cx+r*0.55+off, cy+r*0.75);
+    ctx.stroke();
+  }
+}
+function drawIzzet(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.lineWidth=Math.max(1,r*0.12);
+  ctx.beginPath(); ctx.arc(cx,cy,r*0.88,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.moveTo(cx+r*0.1, cy-r*0.6); ctx.lineTo(cx-r*0.25, cy+r*0.05); ctx.lineTo(cx+r*0.05, cy+r*0.05);
+  ctx.lineTo(cx-r*0.1, cy+r*0.6); ctx.lineTo(cx+r*0.35, cy-r*0.1); ctx.lineTo(cx+r*0.05, cy-r*0.1);
+  ctx.closePath(); ctx.fill();
+}
+function drawOrzhov(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.lineWidth=Math.max(1,r*0.14);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy-r*0.85); ctx.lineTo(cx+r*0.6, cy); ctx.lineTo(cx, cy+r*0.85); ctx.lineTo(cx-r*0.6, cy);
+  ctx.closePath(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-r*0.6, cy); ctx.lineTo(cx+r*0.6, cy); ctx.stroke();
+}
+function drawRakdos(ctx,cx,cy,r,color){
+  ctx.fillStyle=color;
+  const spikes=6, outerR=r*0.92, innerR=r*0.36;
+  ctx.beginPath();
+  for(let i=0;i<spikes*2;i++){
+    const angle=(Math.PI/spikes)*i - Math.PI/2, rad=i%2===0?outerR:innerR;
+    const x=cx+Math.cos(angle)*rad, y=cy+Math.sin(angle)*rad;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath(); ctx.fill();
+}
+function drawSelesnya(ctx,cx,cy,r,color){
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy-r*0.85);
+  ctx.quadraticCurveTo(cx+r*0.75, cy-r*0.2, cx, cy+r*0.85);
+  ctx.quadraticCurveTo(cx-r*0.75, cy-r*0.2, cx, cy-r*0.85);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.35)'; ctx.lineWidth=Math.max(1,r*0.08);
+  ctx.beginPath(); ctx.moveTo(cx,cy-r*0.7); ctx.lineTo(cx,cy+r*0.7); ctx.stroke();
+}
+function drawSimic(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.lineWidth=Math.max(1,r*0.16); ctx.lineCap='round';
+  ctx.beginPath();
+  ctx.moveTo(cx-r*0.6, cy+r*0.5);
+  ctx.bezierCurveTo(cx-r*0.6, cy-r*0.6, cx+r*0.6, cy-r*0.6, cx+r*0.3, cy);
+  ctx.bezierCurveTo(cx+r*0.05, cy+r*0.4, cx-r*0.15, cy+r*0.15, cx+r*0.1, cy-r*0.05);
+  ctx.stroke();
+}
+function drawAnimalIcon(ctx, cx, cy, r, color, name){
+  const n = (name||'').toLowerCase();
+  ctx.fillStyle = color || '#c96a5a';
+  ctx.strokeStyle = color || '#c96a5a';
+  ctx.lineWidth = Math.max(1, r*0.15);
+  if(n.includes('werewolf') || n.includes('moonlit')){
+    ctx.beginPath();
+    ctx.moveTo(cx, cy-r*0.9); ctx.lineTo(cx-r*0.35, cy-r*0.3); ctx.lineTo(cx-r*0.5, cy+r*0.7);
+    ctx.lineTo(cx-r*0.15, cy+r*0.5); ctx.lineTo(cx, cy+r*0.9); ctx.lineTo(cx+r*0.15, cy+r*0.5);
+    ctx.lineTo(cx+r*0.5, cy+r*0.7); ctx.lineTo(cx+r*0.35, cy-r*0.3); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx-r*0.3,cy-r*0.9); ctx.lineTo(cx,cy-r*1.3); ctx.lineTo(cx+r*0.3,cy-r*0.9); ctx.stroke();
+  } else if(n.includes('wolf')){
+    ctx.beginPath();
+    ctx.ellipse(cx, cy+r*0.1, r*0.7, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx+r*0.5, cy-r*0.1); ctx.lineTo(cx+r*0.95, cy-r*0.35); ctx.lineTo(cx+r*0.55, cy+r*0.15); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx+r*0.75,cy-r*0.45); ctx.lineTo(cx+r*0.85,cy-r*0.75); ctx.lineTo(cx+r*0.6,cy-r*0.5); ctx.closePath(); ctx.fill();
+  } else if(n.includes('bat')){
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.quadraticCurveTo(cx-r*0.9, cy-r*0.7, cx-r*1.1, cy-r*0.1);
+    ctx.quadraticCurveTo(cx-r*0.5, cy-r*0.15, cx, cy+r*0.15);
+    ctx.quadraticCurveTo(cx+r*0.5, cy-r*0.15, cx+r*1.1, cy-r*0.1);
+    ctx.quadraticCurveTo(cx+r*0.9, cy-r*0.7, cx, cy);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx, cy-r*0.15, r*0.22, r*0.28, 0, 0, Math.PI*2); ctx.fill();
+  } else if(n.includes('boar')){
+    ctx.beginPath(); ctx.ellipse(cx, cy+r*0.1, r*0.7, r*0.42, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx-r*0.65,cy); ctx.lineTo(cx-r*0.95,cy+r*0.15); ctx.lineTo(cx-r*0.65,cy+r*0.25); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#e8e0c8'; ctx.beginPath(); ctx.moveTo(cx-r*0.9,cy+r*0.05); ctx.lineTo(cx-r*1.05,cy-r*0.1); ctx.stroke();
+  } else if(n.includes('bear')){
+    ctx.beginPath(); ctx.ellipse(cx, cy+r*0.15, r*0.75, r*0.55, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx-r*0.55, cy-r*0.45, r*0.3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx-r*0.75, cy-r*0.7, r*0.13, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx-r*0.3, cy-r*0.65, r*0.13, 0, Math.PI*2); ctx.fill();
+  } else {
+    ctx.beginPath(); ctx.arc(cx, cy, r*0.7, 0, Math.PI*2); ctx.fill();
+  }
+}
+function drawVampireIcon(ctx,cx,cy,r,color){
+  ctx.fillStyle=color; ctx.beginPath();
+  ctx.moveTo(cx,cy-r*0.8); ctx.lineTo(cx-r*0.8,cy+r*0.7); ctx.lineTo(cx,cy+r*0.3); ctx.lineTo(cx+r*0.8,cy+r*0.7);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.moveTo(cx-r*0.15,cy-r*0.1); ctx.lineTo(cx,cy+r*0.15); ctx.lineTo(cx+r*0.15,cy-r*0.1); ctx.closePath(); ctx.fill();
+}
+function drawSkeletonIcon(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=Math.max(1,r*0.13);
+  ctx.beginPath(); ctx.arc(cx,cy-r*0.5,r*0.35,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx-r*0.15,cy-r*0.55,r*0.08,0,Math.PI*2); ctx.arc(cx+r*0.15,cy-r*0.55,r*0.08,0,Math.PI*2); ctx.fillStyle='#000'; ctx.fill();
+  ctx.strokeStyle=color; ctx.beginPath(); ctx.moveTo(cx-r*0.35,cy); ctx.lineTo(cx+r*0.35,cy); ctx.moveTo(cx-r*0.3,cy+r*0.25); ctx.lineTo(cx+r*0.3,cy+r*0.25); ctx.stroke();
+}
+function drawEldraziIcon(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.lineWidth=Math.max(1,r*0.14);
+  ctx.beginPath(); ctx.arc(cx,cy,r*0.3,0,Math.PI*2); ctx.stroke();
+  for(let i=0;i<5;i++){ const a=i*(Math.PI*2/5)-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx+Math.cos(a)*r*0.3, cy+Math.sin(a)*r*0.3);
+    ctx.quadraticCurveTo(cx+Math.cos(a)*r*0.7+r*0.2, cy+Math.sin(a)*r*0.7, cx+Math.cos(a)*r*0.95, cy+Math.sin(a)*r*0.95);
+    ctx.stroke();
+  }
+}
+function drawGiantIcon(ctx,cx,cy,r,color){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=Math.max(1,r*0.18);
+  ctx.beginPath(); ctx.arc(cx,cy-r*0.55,r*0.32,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx-r*0.5,cy+r*0.7); ctx.lineTo(cx-r*0.35,cy-r*0.05); ctx.lineTo(cx+r*0.35,cy-r*0.05); ctx.lineTo(cx+r*0.5,cy+r*0.7); ctx.stroke();
+}
+
+function setupBeastIcon(id){
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#1c2a1a';
+  ctx.fillRect(0,0,36,36);
+  return ctx;
+}
+const GUILD_COLORS = {
+  azorius:'#8fb8d9', boros:'#d9776a', dimir:'#6a7bbf', golgari:'#7a9463', gruul:'#c67a3a',
+  izzet:'#a76ad9', orzhov:'#c9b6d9', rakdos:'#b03a4a', selesnya:'#8fc98a', simic:'#6fc9c2'
+};
+const GUILD_ICON_FN = { azorius:drawAzorius, boros:drawBoros, dimir:drawDimir, golgari:drawGolgari, gruul:drawGruul,
+  izzet:drawIzzet, orzhov:drawOrzhov, rakdos:drawRakdos, selesnya:drawSelesnya, simic:drawSimic };
+Object.keys(GUILD_ICON_FN).forEach(key=>{
+  const ctx = setupBeastIcon('beast-'+key);
+  GUILD_ICON_FN[key](ctx, 18, 18, 13, GUILD_COLORS[key]);
+});
+[['wolf','Wolf','#8a8a8a'],['werewolf','Moonlit Werewolf','#6a5a7a'],['bat','Bat','#5a4a6a'],['boar','Boar','#8a6a4a'],['bear','Bear','#6a4a3a']].forEach(([id,name,color])=>{
+  const ctx = setupBeastIcon('beast-'+id);
+  drawAnimalIcon(ctx, 18, 19, 13, color, name);
+});
+(function(){ const ctx=setupBeastIcon('beast-vampire'); drawVampireIcon(ctx,18,18,13,'#8a3a4a'); })();
+(function(){ const ctx=setupBeastIcon('beast-skeleton'); drawSkeletonIcon(ctx,18,18,13,'#d9cbaa'); })();
+(function(){ const ctx=setupBeastIcon('beast-eldrazi'); drawEldraziIcon(ctx,18,18,13,'#6a4a8a'); })();
+(function(){ const ctx=setupBeastIcon('beast-giant'); drawGiantIcon(ctx,18,18,13,'#a8790f'); })();
+
+// Shop-type icons, drawn with the exact in-game path code from drawZoneIcon
+function drawZoneIcon(ctx, cx, cy, r, type){
+  if(type==='magic'){
+    ctx.fillStyle = '#c9a6e0';
+    for(let i=0;i<4;i++){
+      const a = (Math.PI/2)*i;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r);
+      ctx.lineTo(cx+Math.cos(a+0.5)*r*0.4, cy+Math.sin(a+0.5)*r*0.4);
+      ctx.closePath(); ctx.fill();
+    }
+  } else if(type==='general'){
+    ctx.fillStyle = '#b8804a';
+    ctx.fillRect(cx-r*0.8, cy-r*0.55, r*1.6, r*1.1);
+    ctx.strokeStyle = '#5a3a1e'; ctx.lineWidth = Math.max(1,r*0.14);
+    ctx.beginPath(); ctx.moveTo(cx-r*0.8,cy); ctx.lineTo(cx+r*0.8,cy); ctx.stroke();
+  } else if(type==='inn'){
+    ctx.fillStyle = '#d9a24a';
+    ctx.beginPath();
+    ctx.moveTo(cx-r*0.75,cy-r*0.6); ctx.lineTo(cx+r*0.75,cy-r*0.6); ctx.lineTo(cx+r*0.95,cy+r*0.15); ctx.lineTo(cx-r*0.95,cy+r*0.15);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#8a5a2a';
+    ctx.fillRect(cx-r*0.6, cy+r*0.15, r*1.2, r*0.65);
+  } else if(type==='blacksmith'){
+    ctx.fillStyle = '#9aa0a8';
+    ctx.fillRect(cx-r*0.8, cy-r*0.1, r*1.6, r*0.32);
+    ctx.fillRect(cx-r*0.22, cy-r*0.1, r*0.44, r*0.6);
+    ctx.beginPath();
+    ctx.moveTo(cx-r*0.4,cy+r*0.5); ctx.lineTo(cx+r*0.4,cy+r*0.5); ctx.lineTo(cx+r*0.25,cy+r*0.78); ctx.lineTo(cx-r*0.25,cy+r*0.78);
+    ctx.closePath(); ctx.fill();
+  }
+}
+['magic','general','inn','blacksmith'].forEach(type=>{
+  const ctx = setupIcon('icon-shop-'+type);
+  drawZoneIcon(ctx, 16, 16, 11, type);
+});
+</script>
+</body>
+</html>
