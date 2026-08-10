@@ -8400,7 +8400,7 @@ function enableLongPressDrag(btn){
   let dragging = false;
   let startX = 0, startY = 0;
   let startSlot = 0;
-  let placeholderRect = null;
+  let ghost = null;
   let lastTargetBtn = null;
   const LONG_PRESS_MS = 500;
   const MOVE_TOLERANCE = 10; // px of finger movement allowed before a pending long-press is cancelled (treated as a tap/scroll instead)
@@ -8413,13 +8413,21 @@ function enableLongPressDrag(btn){
     longPressTimer = setTimeout(()=>{
       dragging = true;
       startSlot = currentSlotOf(btn);
-      placeholderRect = btn.getBoundingClientRect();
+      const rect = btn.getBoundingClientRect();
+      // a floating clone follows the finger; the real button stays in the grid the whole time
+      // so sibling buttons never reflow mid-drag and slot math stays accurate, even at the edges
+      ghost = btn.cloneNode(true);
+      ghost.removeAttribute('data-btn-id');
+      ghost.style.position = 'fixed';
+      ghost.style.left = rect.left + 'px';
+      ghost.style.top = rect.top + 'px';
+      ghost.style.width = rect.width + 'px';
+      ghost.style.height = rect.height + 'px';
+      ghost.style.zIndex = '9999';
+      ghost.style.pointerEvents = 'none';
+      ghost.style.opacity = '0.85';
+      document.body.appendChild(ghost);
       btn.classList.add('btn-dragging');
-      btn.style.position = 'fixed';
-      btn.style.left = placeholderRect.left + 'px';
-      btn.style.top = placeholderRect.top + 'px';
-      btn.style.width = placeholderRect.width + 'px';
-      btn.style.zIndex = '9998';
       if(navigator.vibrate) navigator.vibrate(30);
     }, LONG_PRESS_MS);
   };
@@ -8432,8 +8440,9 @@ function enableLongPressDrag(btn){
       return;
     }
     e.preventDefault();
-    btn.style.left = (touch.clientX - placeholderRect.width/2) + 'px';
-    btn.style.top = (touch.clientY - placeholderRect.height/2) + 'px';
+    const gw = parseFloat(ghost.style.width), gh = parseFloat(ghost.style.height);
+    ghost.style.left = (touch.clientX - gw/2) + 'px';
+    ghost.style.top = (touch.clientY - gh/2) + 'px';
     const bar = toolbar();
     if(!bar) return;
     const targetSlot = slotAtPoint(bar, touch.clientX, touch.clientY);
@@ -8449,7 +8458,7 @@ function enableLongPressDrag(btn){
     if(dragging){
       dragging = false;
       btn.classList.remove('btn-dragging');
-      btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.width = ''; btn.style.zIndex = '';
+      if(ghost){ ghost.remove(); ghost = null; }
       if(lastTargetBtn){
         lastTargetBtn.classList.remove('grid-slot-target');
         const targetSlot = currentSlotOf(lastTargetBtn);
@@ -8468,7 +8477,7 @@ function enableLongPressDrag(btn){
   btn.addEventListener('touchend', onTouchEnd);
   btn.addEventListener('touchcancel', ()=>{
     clearTimeout(longPressTimer); dragging=false; btn.classList.remove('btn-dragging');
-    btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.width = ''; btn.style.zIndex = '';
+    if(ghost){ ghost.remove(); ghost = null; }
     if(lastTargetBtn){ lastTargetBtn.classList.remove('grid-slot-target'); lastTargetBtn = null; }
   });
 }
