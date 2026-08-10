@@ -91,8 +91,8 @@ ul.change-list li{ font-size:1.02rem; line-height:1.65; margin-bottom:8px; }
     <h1>PATH OF THE PLANESWALKER</h1>
     <div class="sub">Changelog</div>
     <div class="stats-row">
-      <div class="stat-box"><div class="num">~189</div><div class="label">Changes</div></div>
-      <div class="stat-box"><div class="num">65</div><div class="label">Bugs Fixed</div></div>
+      <div class="stat-box"><div class="num">~192</div><div class="label">Changes</div></div>
+      <div class="stat-box"><div class="num">67</div><div class="label">Bugs Fixed</div></div>
       <div class="stat-box"><div class="num">34</div><div class="label">New Systems</div></div>
       <div class="stat-box"><div class="num">6</div><div class="label">Full Audits</div></div>
     </div>
@@ -235,6 +235,12 @@ ul.change-list li{ font-size:1.02rem; line-height:1.65; margin-bottom:8px; }
       <li><span class="tag tag-new">NEW</span>Floor tiles now carry plane-specific environmental decoration instead of being plain uniform grid squares — Ravnica gets cracked cobblestone, rubble, and moss; Innistrad gets dead bare trees, gravestones, and drifting fog; Kaladesh gets gears, pipe segments, and aether sparkle; Zendikar gets rock fissures, hedron shards, and gnarled roots; Theros gets broken columns, ivy, and mosaic fragments; Ixalan gets ferns, hanging vines, and fallen logs; Dominaria gets rubble, scorch marks, and battle wreckage; Amonkhet gets sand dune ripples, cracked earth, and small desert cacti. Each decoration is a small hand-drawn canvas shape rather than a sprite image, kept subtle and semi-transparent so it reads as texture rather than clutter.</li>
       <li><span class="tag tag-new">NEW</span>Decorations are generated once when a floor is first created (roughly 10% of floor tiles, never on walls) and stored directly on that floor's own data object, so they're automatically preserved by the existing floor-caching system with no separate storage needed — a given tile's decoration never changes between visits to the same floor. Fades to a dimmer, more transparent version on remembered-but-not-currently-visible tiles, matching how the rest of the floor already dims outside line of sight. Already-cached floors from before this feature simply have no decorations until regenerated, rather than causing any error.</li>
       <li><span class="tag tag-fix">FIX</span>Kept decorations off safe-zone tiles (shops, inns) deliberately — jungle ferns or dead trees inside a designated safe trading post read as inconsistent with those areas being kept "civilized." Excluded at render time rather than generation time, since the shop zone isn't actually placed until after decorations are generated for the floor.</li>
+    </ul>
+
+    <h2 class="entry-title">Gameplay Theme Review Pass</h2>
+    <ul class="change-list">
+      <li><span class="tag tag-fix">FIX</span>Reviewed all ten remaining gameplay themes (inn, blacksmith, general shop, magic, trap room, miniboss, boss fight, Bolas, triumphant, victory fanfare) for the same scale-consistency issue found and fixed on the landing theme earlier. Checked each theme's actual pitch classes against a real scale rather than by ear: eight of the ten were already coherent (each uses a proper subset of a real diatonic or modal scale, just not every degree of it, which is normal for a short phrase) and needed no changes. Two genuinely wandered — magic used 6 unrelated pitch classes with no consistent scale, and boss fight used 8 out of 12 possible notes.</li>
+      <li><span class="tag tag-fix">FIX</span>Retuned magic to E Phrygian, a genuinely exotic/arcane-sounding mode, replacing the scattered original while keeping its slow, shimmering sine-tone character intact. Retuned boss fight to a consistent F natural minor, replacing two accidental-sounding notes that didn't belong to any coherent scale, while keeping its grand, weighty character. Also caught and fixed one outlier bass note in the trap room theme (an E natural where the rest of the piece consistently uses Eb, matching F minor). Verified all ten themes still beat-match between melody and bass, re-verified the two retuned themes now use only notes from their intended scale, and confirmed all 14 themes in the game (including the four landing theme candidates) still play without error.</li>
     </ul>
 
     <ul class="change-list">
