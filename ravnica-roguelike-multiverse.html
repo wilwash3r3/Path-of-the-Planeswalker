@@ -164,6 +164,11 @@
   .btn-dragging{ opacity:0.7; box-shadow:0 0 0 3px rgba(232,193,74,0.6); }
 
   .toolbar{display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; flex-shrink:0;}
+  body.touch-controls-on .toolbar{
+    display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:repeat(2,auto);
+    gap:8px; flex-wrap:unset; justify-content:unset;
+  }
+  .grid-slot-target{ box-shadow:0 0 0 3px rgba(232,193,74,0.9) inset; }
   .toolbar.compact-layout{gap:5px;}
   .toolbar.compact-layout button{padding:6px 10px; font-size:0.68rem; letter-spacing:0.01em;}
   .toolbar.compact-layout .keycap{padding:0 3px; font-size:0.6rem; margin-left:2px;}
@@ -8353,58 +8358,53 @@ const webManifest = {
 const manifestLink = document.getElementById('webManifest');
 if(manifestLink) manifestLink.href = 'data:application/manifest+json;base64,' + btoa(JSON.stringify(webManifest));
 
-const BUTTON_POSITIONS_KEY = 'planeswalker_button_positions';
-let customButtonPositions = {};
-function loadButtonPositions(){
+const BUTTON_ORDER_KEY = 'planeswalker_button_order';
+const GRID_COLS = 5;
+let customButtonOrder = {};
+function loadButtonOrder(){
   try {
-    const raw = localStorage.getItem(BUTTON_POSITIONS_KEY);
-    if(raw) customButtonPositions = JSON.parse(raw);
-  } catch(err){ /* ignore - positions just won't persist in this environment */ }
+    const raw = localStorage.getItem(BUTTON_ORDER_KEY);
+    if(raw) customButtonOrder = JSON.parse(raw);
+  } catch(err){ /* ignore - order just won't persist in this environment */ }
 }
-function saveButtonPositions(){
-  try { localStorage.setItem(BUTTON_POSITIONS_KEY, JSON.stringify(customButtonPositions)); } catch(err){}
+function saveButtonOrder(){
+  try { localStorage.setItem(BUTTON_ORDER_KEY, JSON.stringify(customButtonOrder)); } catch(err){}
 }
-function applyButtonPositions(){
-  Object.entries(customButtonPositions).forEach(([id, pos])=>{
-    const btn = document.querySelector(`[data-btn-id="${id}"]`);
-    if(btn){
-      btn.style.position = 'fixed';
-      btn.style.left = pos.x + 'px';
-      btn.style.top = pos.y + 'px';
-      btn.style.zIndex = '9998';
-    }
+function applyButtonOrder(){
+  document.querySelectorAll('[data-btn-id]').forEach(btn=>{
+    const id = btn.dataset.btnId;
+    if(customButtonOrder[id] !== undefined) btn.style.order = customButtonOrder[id];
   });
 }
 function resetButtonPositions(){
-  customButtonPositions = {};
-  saveButtonPositions();
-  document.querySelectorAll('[data-btn-id]').forEach(btn=>{
-    btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.zIndex = '';
-  });
+  customButtonOrder = {};
+  saveButtonOrder();
+  document.querySelectorAll('[data-btn-id]').forEach(btn=>{ btn.style.order = ''; });
 }
-const BUTTON_GRID_SIZE = 44;
-function snapToGrid(value){
-  return Math.round(value / BUTTON_GRID_SIZE) * BUTTON_GRID_SIZE;
+function currentSlotOf(btn){
+  // a button's slot is its explicit order if set, otherwise its natural position among toolbar buttons
+  const all = [...document.querySelectorAll('[data-btn-id]')];
+  if(btn.style.order !== '') return parseInt(btn.style.order, 10);
+  return all.indexOf(btn);
 }
-function rectsOverlap(a, b){
-  return !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
-}
-function wouldOverlapOthers(btn, x, y, width, height){
-  const candidate = { left: x, top: y, right: x+width, bottom: y+height };
-  const others = document.querySelectorAll('[data-btn-id]');
-  for(const other of others){
-    if(other === btn) continue;
-    const r = other.getBoundingClientRect();
-    if(rectsOverlap(candidate, r)) return true;
-  }
-  return false;
+function slotAtPoint(toolbar, clientX, clientY){
+  const rect = toolbar.getBoundingClientRect();
+  const cellW = rect.width / GRID_COLS;
+  const cellH = rect.height / 2; // two rows
+  const col = Math.max(0, Math.min(GRID_COLS-1, Math.floor((clientX - rect.left) / cellW)));
+  const row = Math.max(0, Math.min(1, Math.floor((clientY - rect.top) / cellH)));
+  return row * GRID_COLS + col;
 }
 function enableLongPressDrag(btn){
   let longPressTimer = null;
   let dragging = false;
   let startX = 0, startY = 0;
+  let startSlot = 0;
+  let placeholderRect = null;
+  let lastTargetBtn = null;
   const LONG_PRESS_MS = 500;
   const MOVE_TOLERANCE = 10; // px of finger movement allowed before a pending long-press is cancelled (treated as a tap/scroll instead)
+  const toolbar = () => btn.closest('.toolbar');
   const onTouchStart = (e)=>{
     if(!document.body.classList.contains('touch-controls-on')) return; // repositioning only makes sense with touch controls active
     const touch = e.touches[0];
@@ -8412,7 +8412,14 @@ function enableLongPressDrag(btn){
     dragging = false;
     longPressTimer = setTimeout(()=>{
       dragging = true;
+      startSlot = currentSlotOf(btn);
+      placeholderRect = btn.getBoundingClientRect();
       btn.classList.add('btn-dragging');
+      btn.style.position = 'fixed';
+      btn.style.left = placeholderRect.left + 'px';
+      btn.style.top = placeholderRect.top + 'px';
+      btn.style.width = placeholderRect.width + 'px';
+      btn.style.zIndex = '9998';
       if(navigator.vibrate) navigator.vibrate(30);
     }, LONG_PRESS_MS);
   };
@@ -8425,48 +8432,49 @@ function enableLongPressDrag(btn){
       return;
     }
     e.preventDefault();
-    const rect = btn.getBoundingClientRect();
-    const rawX = touch.clientX - rect.width/2;
-    const rawY = touch.clientY - rect.height/2;
-    const clampedX = Math.max(0, Math.min(window.innerWidth-rect.width, rawX));
-    const clampedY = Math.max(0, Math.min(window.innerHeight-rect.height, rawY));
-    btn.style.position = 'fixed';
-    btn.style.left = snapToGrid(clampedX) + 'px';
-    btn.style.top = snapToGrid(clampedY) + 'px';
-    btn.style.zIndex = '9998';
+    btn.style.left = (touch.clientX - placeholderRect.width/2) + 'px';
+    btn.style.top = (touch.clientY - placeholderRect.height/2) + 'px';
+    const bar = toolbar();
+    if(!bar) return;
+    const targetSlot = slotAtPoint(bar, touch.clientX, touch.clientY);
+    const candidate = [...document.querySelectorAll('[data-btn-id]')].find(b => b !== btn && currentSlotOf(b) === targetSlot);
+    if(candidate !== lastTargetBtn){
+      if(lastTargetBtn) lastTargetBtn.classList.remove('grid-slot-target');
+      if(candidate) candidate.classList.add('grid-slot-target');
+      lastTargetBtn = candidate || null;
+    }
   };
   const onTouchEnd = (e)=>{
     clearTimeout(longPressTimer);
     if(dragging){
       dragging = false;
       btn.classList.remove('btn-dragging');
-      const rect = btn.getBoundingClientRect();
-      if(wouldOverlapOthers(btn, rect.left, rect.top, rect.width, rect.height)){
-        // reject the drop - restore whatever position (custom or default) it had before this drag
-        const saved = customButtonPositions[btn.dataset.btnId];
-        if(saved){
-          btn.style.position = 'fixed';
-          btn.style.left = saved.x + 'px';
-          btn.style.top = saved.y + 'px';
-        } else {
-          btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.zIndex = '';
-        }
-        if(navigator.vibrate) navigator.vibrate([20,20,20]); // distinct pattern signaling "can't drop here"
-      } else {
-        customButtonPositions[btn.dataset.btnId] = { x: parseFloat(btn.style.left), y: parseFloat(btn.style.top) };
-        saveButtonPositions();
+      btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.width = ''; btn.style.zIndex = '';
+      if(lastTargetBtn){
+        lastTargetBtn.classList.remove('grid-slot-target');
+        const targetSlot = currentSlotOf(lastTargetBtn);
+        lastTargetBtn.style.order = startSlot;
+        btn.style.order = targetSlot;
+        customButtonOrder[lastTargetBtn.dataset.btnId] = startSlot;
+        customButtonOrder[btn.dataset.btnId] = targetSlot;
+        saveButtonOrder();
       }
+      lastTargetBtn = null;
       e.preventDefault(); // stop the tap/click that would otherwise fire the button's own action right after a drag
     }
   };
   btn.addEventListener('touchstart', onTouchStart, {passive:true});
   btn.addEventListener('touchmove', onTouchMove, {passive:false});
   btn.addEventListener('touchend', onTouchEnd);
-  btn.addEventListener('touchcancel', ()=>{ clearTimeout(longPressTimer); dragging=false; btn.classList.remove('btn-dragging'); });
+  btn.addEventListener('touchcancel', ()=>{
+    clearTimeout(longPressTimer); dragging=false; btn.classList.remove('btn-dragging');
+    btn.style.position = ''; btn.style.left = ''; btn.style.top = ''; btn.style.width = ''; btn.style.zIndex = '';
+    if(lastTargetBtn){ lastTargetBtn.classList.remove('grid-slot-target'); lastTargetBtn = null; }
+  });
 }
 document.querySelectorAll('[data-btn-id]').forEach(enableLongPressDrag);
-loadButtonPositions();
-applyButtonPositions();
+loadButtonOrder();
+applyButtonOrder();
 
 function setupHoldToMove(el, action){
   if(!el) return;
